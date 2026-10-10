@@ -57,3 +57,11 @@ index.html
 
 Trang tĩnh, không có server: lựa chọn được lưu trong trình duyệt của cô ấy (localStorage)
 và gửi cho anh qua nút **Gửi cho anh** (Web Share API, nếu không hỗ trợ thì sao chép vào clipboard).
+
+## Giao diện
+
+- `index.html` – **Game pixel** (đang dùng). Đổi tên màn hình theo kiểu game:
+  1 Start (`PRESS START`) · 2 Hộp thoại RPG · 3 `QUEST LOG` · 4 `NEW QUEST!` · 5 `ITEM SHOP` · 6 `QUEST ACCEPTED!`.
+  Thanh HP (tim) ở trên cùng = tiến trình, có âm thanh 8-bit (bật/tắt bằng nút `SFX`).
+  Chữ có dấu dùng font VT323; font Press Start 2P chỉ dùng cho nhãn tiếng Anh không dấu.
+- `index-dem-sao.html` – bản thay thế **Đêm đầy sao** (cùng nội dung, cùng luồng).
