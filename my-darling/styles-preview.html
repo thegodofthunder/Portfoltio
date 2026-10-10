@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Đề xuất style</title>
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@500;600&family=Playfair+Display:ital,wght@0,600;1,600&family=Lora:ital@0;1&family=Caveat:wght@600&family=Press+Start+2P&family=Cormorant+Garamond:wght@500;600&family=Be+Vietnam+Pro:wght@300;500&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Be Vietnam Pro', system-ui, sans-serif; background: #f4f1ee; color: #2b2b2b; padding: 32px 16px 48px; }
+  header { max-width: 1100px; margin: 0 auto 28px; }
+  header h1 { font-size: 26px; font-weight: 500; }
+  header p { color: #777; margin-top: 6px; }
+  .grid { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; }
+  figure { display: flex; flex-direction: column; gap: 10px; }
+  figcaption b { display: block; font-size: 17px; font-weight: 500; }
+  figcaption span { font-size: 14px; color: #777; line-height: 1.5; }
+  .stage { height: 340px; border-radius: 18px; overflow: hidden; position: relative;
+           display: grid; place-items: center; padding: 20px; text-align: center; }
+  .card { width: 100%; max-width: 280px; padding: 26px 20px; position: relative; }
+  .q { margin-bottom: 18px; line-height: 1.25; }
+  .btns { display: flex; gap: 10px; justify-content: center; }
+  .btns button { font: inherit; border: none; cursor: pointer; padding: 10px 20px; }
+  .sub { font-size: 13px; margin-bottom: 10px; }
+
+  /* 1. Hồng ngọt ngào (hiện tại) */
+  .s1 .stage { background: linear-gradient(160deg, #ffe3ec, #ffc2d4); }
+  .s1 .card { background: rgba(255,255,255,.85); border-radius: 22px; box-shadow: 0 16px 40px rgba(224,69,123,.25); font-family: Quicksand; color: #5a2a3a; }
+  .s1 .q { font-family: 'Dancing Script'; font-size: 30px; color: #e0457b; }
+  .s1 .sub { color: #9b6b7a; }
+  .s1 button { border-radius: 999px; font-weight: 600; background: #ff6f91; color: #fff; }
+  .s1 button + button { background: #fff; color: #e0457b; }
+
+  /* 2. Thư tay vintage */
+  .s2 .stage { background: #6b4f3a radial-gradient(circle at 30% 20%, #8a6a50, #4a3426); }
+  .s2 .card { background: #f6ecd6; color: #4a3426; font-family: Lora; font-style: italic;
+              box-shadow: 0 10px 30px rgba(0,0,0,.4); border: 1px solid #e1cfa8;
+              background-image: repeating-linear-gradient(#f6ecd6 0 27px, #e8d9b8 27px 28px); }
+  .s2 .q { font-family: 'Playfair Display'; font-size: 24px; color: #7a1f1f; }
+  .s2 .seal { position: absolute; top: -18px; right: -12px; width: 46px; height: 46px; border-radius: 50%;
+              background: radial-gradient(circle at 35% 35%, #c0392b, #7a1f1f); color: #f6ecd6;
+              display: grid; place-items: center; font-family: 'Playfair Display'; font-size: 18px;
+              box-shadow: 0 3px 8px rgba(0,0,0,.35); }
+  .s2 button { font-family: 'Playfair Display'; background: #7a1f1f; color: #f6ecd6; border-radius: 2px; }
+  .s2 button + button { background: transparent; color: #7a1f1f; border: 1px solid #7a1f1f; }
+
+  /* 3. Đêm sao */
+  .s3 .stage { background: radial-gradient(ellipse at bottom, #1b2a4e, #070b1a); }
+  .s3 .stage::before { content: ''; position: absolute; inset: 0;
+    background-image: radial-gradient(1.5px 1.5px at 20% 30%, #fff, transparent), radial-gradient(1px 1px at 70% 20%, #fff, transparent),
+      radial-gradient(1.5px 1.5px at 85% 60%, #fff, transparent), radial-gradient(1px 1px at 40% 80%, #fff, transparent),
+      radial-gradient(1px 1px at 10% 70%, #fff, transparent), radial-gradient(2px 2px at 55% 45%, #ffe7a3, transparent);
+    animation: twinkle 3s ease-in-out infinite alternate; }
+  @keyframes twinkle { from { opacity: .4; } to { opacity: 1; } }
+  .s3 .card { color: #e9e4d4; font-family: 'Cormorant Garamond'; font-size: 18px;
+              border: 1px solid rgba(232,200,120,.4); border-radius: 16px; background: rgba(255,255,255,.04); backdrop-filter: blur(4px); }
+  .s3 .q { font-size: 28px; color: #e8c878; font-weight: 600; }
+  .s3 .sub { color: #a7a9c4; letter-spacing: 3px; text-transform: uppercase; font-size: 11px; }
+  .s3 button { font-family: 'Be Vietnam Pro'; font-size: 14px; background: linear-gradient(135deg, #f3d98b, #c99a3c); color: #1b1b2f; border-radius: 999px; }
+  .s3 button + button { background: transparent; color: #e8c878; border: 1px solid #e8c878; }
+
+  /* 4. Scrapbook polaroid */
+  .s4 .stage { background: #d9c3a5; background-image: radial-gradient(#c8ad8a 1px, transparent 1px); background-size: 14px 14px; }
+  .s4 .card { background: #fff; padding: 14px 14px 22px; transform: rotate(-3deg); box-shadow: 0 8px 20px rgba(0,0,0,.2); font-family: Caveat; color: #333; }
+  .s4 .photo { height: 110px; background: linear-gradient(135deg, #ffd1dc, #b5e3ff); display: grid; place-items: center; font-size: 44px; margin-bottom: 10px; }
+  .s4 .tape { position: absolute; top: -12px; left: 50%; width: 90px; height: 24px; transform: translateX(-50%) rotate(4deg); background: rgba(255,230,150,.75); }
+  .s4 .q { font-size: 28px; margin-bottom: 10px; }
+  .s4 button { font-family: Caveat; font-size: 22px; background: #ff8fab; color: #fff; border-radius: 6px; transform: rotate(-2deg); }
+  .s4 button + button { background: #fff; color: #555; border: 2px dashed #bbb; transform: rotate(2deg); }
+
+  /* 5. Tối giản thanh lịch */
+  .s5 .stage { background: #fbfaf8; border: 1px solid #ece8e1; }
+  .s5 .card { font-family: 'Cormorant Garamond'; color: #1f1f1f; }
+  .s5 .sub { font-family: 'Be Vietnam Pro'; font-weight: 300; font-size: 11px; letter-spacing: 4px; text-transform: uppercase; color: #a08a6a; }
+  .s5 .q { font-size: 30px; font-weight: 500; }
+  .s5 .line { width: 40px; height: 1px; background: #a08a6a; margin: 0 auto 18px; }
+  .s5 button { font-family: 'Be Vietnam Pro'; font-weight: 300; font-size: 13px; letter-spacing: 2px; text-transform: uppercase; background: #1f1f1f; color: #fbfaf8; }
+  .s5 button + button { background: transparent; color: #1f1f1f; border-bottom: 1px solid #1f1f1f; }
+
+  /* 6. Game pixel */
+  .s6 .stage { background: #2d1b4e; background-image: linear-gradient(#3a2563 2px, transparent 2px), linear-gradient(90deg, #3a2563 2px, transparent 2px); background-size: 24px 24px; }
+  .s6 .card { background: #fff4e0; border: 4px solid #1a1a1a; box-shadow: 6px 6px 0 #ff5c8a; font-family: 'Press Start 2P'; font-size: 9px; line-height: 1.8; color: #1a1a1a; }
+  .s6 .q { font-size: 12px; line-height: 1.8; }
+  .s6 .sub { color: #ff5c8a; }
+  .s6 .hp { font-size: 16px; margin-bottom: 10px; letter-spacing: 2px; }
+  .s6 button { font-family: 'Press Start 2P'; font-size: 9px; background: #ff5c8a; color: #fff; border: 3px solid #1a1a1a; box-shadow: 3px 3px 0 #1a1a1a; }
+  .s6 button + button { background: #fff; color: #1a1a1a; }
+
+  @media (prefers-reduced-motion: reduce) { .s3 .stage::before { animation: none; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>Đề xuất style UI/UX cho lời mời 28/10</h1>
+  <p>Mỗi ô là màn hình câu hỏi "Em đi chơi với anh nhé?" được vẽ theo một style.</p>
+</header>
+
+<div class="grid">
+  <figure class="s1">
+    <div class="stage"><div class="card">
+      <p class="sub">💌 dành cho em</p>
+      <p class="q">Em đi chơi với anh vào sinh nhật nhé?</p>
+      <div class="btns"><button>Đồng ý 💖</button><button>Không</button></div>
+    </div></div>
+    <figcaption><b>1 · Hồng ngọt ngào (đang dùng)</b><span>Pastel, tim bay, chữ viết tay. Dễ thương, an toàn.</span></figcaption>
+  </figure>
+
+  <figure class="s2">
+    <div class="stage"><div class="card">
+      <div class="seal">A</div>
+      <p class="sub">Tháng Mười, 2026</p>
+      <p class="q">Em đi chơi với anh vào sinh nhật nhé?</p>
+      <div class="btns"><button>Đồng ý</button><button>Không</button></div>
+    </div></div>
+    <figcaption><b>2 · Thư tay vintage</b><span>Giấy kẻ dòng, dấu sáp đỏ, chữ có chân. Mở thư bằng cách bẻ dấu sáp. Sâu lắng, cổ điển.</span></figcaption>
+  </figure>
+
+  <figure class="s3">
+    <div class="stage"><div class="card">
+      <p class="sub">28 · 10 · 2026</p>
+      <p class="q">Em đi chơi với anh vào sinh nhật nhé?</p>
+      <div class="btns"><button>Đồng ý ✨</button><button>Không</button></div>
+    </div></div>
+    <figcaption><b>3 · Đêm sao lãng mạn</b><span>Nền trời đêm, sao lấp lánh, ánh vàng. Kết thúc bằng pháo hoa và sao băng. Hợp với buổi hẹn tối.</span></figcaption>
+  </figure>
+
+  <figure class="s4">
+    <div class="stage"><div class="card">
+      <div class="tape"></div>
+      <div class="photo">📸</div>
+      <p class="q">Em đi chơi với anh vào sinh nhật nhé?</p>
+      <div class="btns"><button>Có chứ!</button><button>Không</button></div>
+    </div></div>
+    <figcaption><b>4 · Scrapbook / Polaroid</b><span>Ảnh Polaroid, băng dính, chữ viết tay. Lồng ảnh thật hai người. Cá nhân, nhiều kỷ niệm nhất.</span></figcaption>
+  </figure>
+
+  <figure class="s5">
+    <div class="stage"><div class="card">
+      <p class="sub">Trân trọng kính mời</p>
+      <div class="line"></div>
+      <p class="q">Em đi chơi với anh vào sinh nhật nhé?</p>
+      <div class="btns"><button>Đồng ý</button><button>Không</button></div>
+    </div></div>
+    <figcaption><b>5 · Tối giản thanh lịch</b><span>Như thiệp cưới cao cấp: trắng ngà, chữ serif, điểm vàng champagne. Chuyển cảnh chậm, tinh tế.</span></figcaption>
+  </figure>
+
+  <figure class="s6">
+    <div class="stage"><div class="card">
+      <p class="hp">♥♥♥♥♥</p>
+      <p class="sub">LEVEL 28 UNLOCKED</p>
+      <p class="q">Em đi chơi với anh vào sinh nhật nhé?</p>
+      <div class="btns"><button>YES</button><button>NO</button></div>
+    </div></div>
+    <figcaption><b>6 · Game pixel</b><span>Chơi như game retro: nhặt tim qua từng màn, chọn món như chọn vật phẩm. Vui, bất ngờ. Lưu ý: font pixel này thiếu dấu tiếng Việt, khi làm thật sẽ đổi font hoặc dùng chữ không dấu cho tiêu đề.</span></figcaption>
+  </figure>
+</div>
+</body>
+</html>
