@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lời mời cho em 💌</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Quicksand:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --pink: #ff6f91;
+    --pink-dark: #e0457b;
+    --cream: #fff6f0;
+    --ink: #5a2a3a;
+    --muted: #9b6b7a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: 'Quicksand', system-ui, sans-serif;
+    color: var(--ink);
+    background: linear-gradient(160deg, #ffe3ec 0%, #ffd6e0 40%, #ffc2d4 100%);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  h1, h2, .script { font-family: 'Dancing Script', cursive; }
+
+  /* floating hearts background */
+  .hearts { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+  .hearts span {
+    position: absolute; bottom: -40px; font-size: 20px; opacity: .7;
+    animation: rise linear forwards;
+  }
+  @keyframes rise {
+    to { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
+  }
+
+  .screen {
+    position: relative; z-index: 1;
+    min-height: 100vh; display: none;
+    flex-direction: column; align-items: center; justify-content: center;
+    padding: 32px 16px; text-align: center;
+  }
+  .screen.active { display: flex; animation: fade .8s ease; }
+  @keyframes fade { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+
+  /* envelope */
+  .envelope {
+    position: relative; width: 280px; height: 180px; cursor: pointer;
+    background: #f7a1b8; border-radius: 0 0 12px 12px;
+    box-shadow: 0 20px 40px rgba(224, 69, 123, .3);
+    animation: wobble 2.4s ease-in-out infinite;
+  }
+  .envelope::before {
+    content: ''; position: absolute; top: 0; left: 0;
+    border-left: 140px solid transparent; border-right: 140px solid transparent;
+    border-top: 100px solid #f48aa6; transform-origin: top;
+    transition: transform .6s ease; z-index: 2;
+  }
+  .envelope::after {
+    content: ''; position: absolute; bottom: 0; left: 0;
+    border-left: 140px solid #fbb6c8; border-right: 140px solid #fbb6c8;
+    border-top: 90px solid transparent; border-radius: 0 0 12px 12px; z-index: 1;
+  }
+  .envelope.open::before { transform: rotateX(180deg); }
+  .envelope .seal {
+    position: absolute; top: 72px; left: 50%; transform: translateX(-50%);
+    font-size: 40px; z-index: 3; transition: opacity .3s;
+  }
+  .envelope.open .seal { opacity: 0; }
+  @keyframes wobble { 0%,100% { transform: rotate(-2deg); } 50% { transform: rotate(2deg); } }
+  .hint { margin-top: 28px; color: var(--muted); font-size: 15px; letter-spacing: .5px; }
+
+  .card {
+    background: rgba(255, 255, 255, .85);
+    backdrop-filter: blur(6px);
+    border-radius: 24px; padding: 36px 28px;
+    max-width: 520px; width: 100%;
+    box-shadow: 0 20px 50px rgba(224, 69, 123, .25);
+  }
+  .card h1 { font-size: 46px; color: var(--pink-dark); line-height: 1.1; margin-bottom: 12px; }
+  .card h2 { font-size: 34px; color: var(--pink-dark); margin-bottom: 16px; }
+  .card p { font-size: 17px; line-height: 1.7; margin-bottom: 14px; }
+  .typed { min-height: 7em; white-space: pre-line; text-align: left; }
+  .typed::after { content: '|'; animation: blink 1s infinite; color: var(--pink); }
+  .typed.done::after { content: ''; }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  .btn {
+    font-family: inherit; font-size: 17px; font-weight: 600;
+    border: none; border-radius: 999px; padding: 14px 32px; cursor: pointer;
+    background: var(--pink); color: white;
+    box-shadow: 0 8px 20px rgba(255, 111, 145, .4);
+    transition: transform .15s, background .2s;
+    white-space: nowrap;
+  }
+  .btn:hover { transform: translateY(-2px); background: var(--pink-dark); }
+  .btn.ghost { background: white; color: var(--pink-dark); box-shadow: 0 6px 16px rgba(0,0,0,.08); }
+  .btn[hidden] { display: none; }
+
+  .date-badge {
+    display: inline-block; margin: 8px 0 20px;
+    font-size: 22px; font-weight: 600; color: white;
+    background: var(--pink); padding: 8px 22px; border-radius: 999px;
+  }
+  .countdown { display: flex; gap: 10px; justify-content: center; margin: 8px 0 24px; flex-wrap: wrap; }
+  .countdown div {
+    background: var(--cream); border-radius: 14px; padding: 10px 6px; min-width: 66px;
+  }
+  .countdown b { display: block; font-size: 28px; color: var(--pink-dark); }
+  .countdown small { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+
+  .timeline { text-align: left; margin: 10px 0 22px; }
+  .timeline li {
+    list-style: none; position: relative; padding: 0 0 18px 34px;
+    border-left: 2px dashed #f7a1b8; margin-left: 10px;
+  }
+  .timeline li:last-child { border-left-color: transparent; padding-bottom: 0; }
+  .timeline li::before {
+    content: attr(data-icon); position: absolute; left: -14px; top: -2px;
+    width: 26px; height: 26px; border-radius: 50%; background: white;
+    display: grid; place-items: center; font-size: 15px;
+    box-shadow: 0 2px 6px rgba(0,0,0,.1);
+  }
+  .timeline .time { font-weight: 600; color: var(--pink-dark); }
+  .timeline .desc { font-size: 15px; color: var(--muted); }
+
+  .question { font-size: 36px; color: var(--pink-dark); margin-bottom: 26px; }
+  .choices { position: relative; display: flex; gap: 18px; justify-content: center; min-height: 60px; }
+  #noBtn { transition: transform .25s ease; }
+
+  .big-heart { font-size: 90px; animation: beat 1s infinite; margin-bottom: 8px; }
+  @keyframes beat { 0%,100% { transform: scale(1); } 30% { transform: scale(1.2); } 60% { transform: scale(.95); } }
+  .signature { font-family: 'Dancing Script', cursive; font-size: 26px; color: var(--pink-dark); margin-top: 10px; }
+
+  .confetti {
+    position: fixed; top: -12px; width: 10px; height: 14px; z-index: 5; pointer-events: none;
+    animation: fall linear forwards;
+  }
+  @keyframes fall { to { transform: translateY(110vh) rotate(720deg); } }
+
+  @media (max-width: 420px) {
+    .card { padding: 28px 18px; }
+    .card h1 { font-size: 38px; }
+    .question { font-size: 30px; }
+    .envelope { transform: scale(.9); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+<div class="hearts" id="hearts"></div>
+
+<!-- 1. Phong bì -->
+<section class="screen active" id="s-envelope">
+  <div class="envelope" id="envelope"><div class="seal">💌</div></div>
+  <p class="hint">Có một lá thư dành cho <span id="nameHint"></span>… chạm để mở nhé 💕</p>
+</section>
+
+<!-- 2. Lá thư -->
+<section class="screen" id="s-letter">
+  <div class="card">
+    <h1 id="greeting"></h1>
+    <p class="typed" id="typed"></p>
+    <button class="btn" id="toPlan" hidden>Đọc tiếp nè →</button>
+  </div>
+</section>
+
+<!-- 3. Kế hoạch -->
+<section class="screen" id="s-plan">
+  <div class="card">
+    <h2>Ngày đặc biệt của em</h2>
+    <div class="date-badge" id="dateBadge"></div>
+    <div class="countdown" id="countdown"></div>
+    <ul class="timeline" id="timeline"></ul>
+    <button class="btn" id="toAsk">Vậy em có đồng ý không? 🥺</button>
+  </div>
+</section>
+
+<!-- 4. Câu hỏi -->
+<section class="screen" id="s-ask">
+  <div class="card">
+    <h2 class="question">Em đi chơi với anh<br>vào sinh nhật nhé?</h2>
+    <div class="choices">
+      <button class="btn" id="yesBtn">Đồng ý 💖</button>
+      <button class="btn ghost" id="noBtn">Không</button>
+    </div>
+  </div>
+</section>
+
+<!-- 5. Kết -->
+<section class="screen" id="s-yes">
+  <div class="card">
+    <div class="big-heart">💖</div>
+    <h1>Yayyy!</h1>
+    <p id="finalMsg"></p>
+    <p class="signature" id="signature"></p>
+  </div>
+</section>
+
+<script>
+/* ===== CHỈNH SỬA Ở ĐÂY ===== */
+const CONFIG = {
+  herName: 'em yêu',          // tên / biệt danh của cô ấy
+  yourName: 'Anh',            // tên của bạn
+  birthday: { day: 28, month: 10 },
+  meetTime: '17:00',          // giờ anh qua đón (dùng cho đồng hồ đếm ngược)
+  letter:
+`Chúc mừng sinh nhật sớm nha em 🎂
+
+Cảm ơn em vì đã xuất hiện và làm mỗi ngày của anh trở nên dịu dàng hơn.
+Năm nay anh muốn dành trọn ngày 28/10 để làm em cười thật nhiều.
+Anh đã chuẩn bị một chút kế hoạch nhỏ… em xem thử nhé!`,
+  plan: [
+    { icon: '🚗', time: '17:00', title: 'Anh qua đón em', desc: 'Em chỉ cần xinh đẹp như mọi ngày thôi' },
+    { icon: '🍝', time: '18:00', title: 'Bữa tối lãng mạn', desc: 'Một nhà hàng nhỏ, ấm cúng anh đã đặt bàn' },
+    { icon: '🎂', time: '19:30', title: 'Thổi nến & ước nguyện', desc: 'Bánh kem vị em thích nhất' },
+    { icon: '🌃', time: '20:30', title: 'Dạo phố ngắm đèn', desc: 'Tay trong tay, kể nhau nghe chuyện cả năm' },
+    { icon: '🎁', time: '21:30', title: 'Bất ngờ cuối ngày', desc: 'Bí mật! Đến lúc đó em sẽ biết 🤫' },
+  ],
+  finalMsg: 'Vậy là chốt rồi nhé! Hẹn em ngày 28/10, nhớ để dành cả buổi tối cho anh. Yêu em nhiều lắm 💕',
+};
+/* =========================== */
+
+const $ = id => document.getElementById(id);
+const show = id => {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  $(id).classList.add('active');
+  window.scrollTo(0, 0);
+};
+
+// Floating hearts
+const heartChars = ['💗', '💖', '💕', '🌸', '✨'];
+function spawnHeart() {
+  const h = document.createElement('span');
+  h.textContent = heartChars[Math.floor(Math.random() * heartChars.length)];
+  h.style.left = Math.random() * 100 + 'vw';
+  h.style.fontSize = 14 + Math.random() * 18 + 'px';
+  h.style.animationDuration = 6 + Math.random() * 6 + 's';
+  $('hearts').appendChild(h);
+  setTimeout(() => h.remove(), 12000);
+}
+setInterval(spawnHeart, 600);
+
+// Text setup
+$('nameHint').textContent = CONFIG.herName;
+$('greeting').textContent = `Gửi ${CONFIG.herName} ♡`;
+$('finalMsg').textContent = CONFIG.finalMsg;
+$('signature').textContent = `— ${CONFIG.yourName} —`;
+
+// Next birthday date (this year, or next year if passed)
+function nextBirthday() {
+  const now = new Date();
+  const [hh, mm] = CONFIG.meetTime.split(':').map(Number);
+  let d = new Date(now.getFullYear(), CONFIG.birthday.month - 1, CONFIG.birthday.day, hh, mm);
+  const endOfDay = new Date(d); endOfDay.setHours(23, 59, 59);
+  if (now > endOfDay) d.setFullYear(d.getFullYear() + 1);
+  return d;
+}
+const bday = nextBirthday();
+const weekdays = ['Chủ nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
+$('dateBadge').textContent =
+  `${weekdays[bday.getDay()]}, ${String(bday.getDate()).padStart(2, '0')}/${String(bday.getMonth() + 1).padStart(2, '0')}/${bday.getFullYear()}`;
+
+function tick() {
+  const diff = bday - new Date();
+  if (diff <= 0) {
+    $('countdown').innerHTML = '<p class="script" style="font-size:28px;color:var(--pink-dark)">Chính là hôm nay đó! 🎉</p>';
+    return;
+  }
+  const units = [
+    ['Ngày', Math.floor(diff / 864e5)],
+    ['Giờ', Math.floor(diff / 36e5) % 24],
+    ['Phút', Math.floor(diff / 6e4) % 60],
+    ['Giây', Math.floor(diff / 1e3) % 60],
+  ];
+  $('countdown').innerHTML = units.map(([l, v]) => `<div><b>${String(v).padStart(2, '0')}</b><small>${l}</small></div>`).join('');
+}
+tick(); setInterval(tick, 1000);
+
+$('timeline').innerHTML = CONFIG.plan.map(p =>
+  `<li data-icon="${p.icon}"><div><span class="time">${p.time}</span> · ${p.title}</div><div class="desc">${p.desc}</div></li>`
+).join('');
+
+// Envelope → letter with typewriter
+$('envelope').addEventListener('click', () => {
+  $('envelope').classList.add('open');
+  setTimeout(() => { show('s-letter'); typeLetter(); }, 700);
+});
+function typeLetter() {
+  const el = $('typed'); let i = 0;
+  const text = CONFIG.letter;
+  const step = () => {
+    el.textContent = text.slice(0, ++i);
+    if (i < text.length) setTimeout(step, 35);
+    else { el.classList.add('done'); $('toPlan').hidden = false; }
+  };
+  step();
+  // tap to skip
+  el.addEventListener('click', () => { i = text.length - 1; }, { once: true });
+}
+
+$('toPlan').addEventListener('click', () => show('s-plan'));
+$('toAsk').addEventListener('click', () => show('s-ask'));
+
+// "No" button runs away, "Yes" grows
+const noTexts = ['Không', 'Chắc chưa?', 'Nghĩ lại đi mà 🥺', 'Thôi mà…', 'Không được đâu 😤', 'Bấm nút kia đi!'];
+let noCount = 0;
+function dodge(e) {
+  e.preventDefault();
+  noCount++;
+  const no = $('noBtn');
+  no.textContent = noTexts[Math.min(noCount, noTexts.length - 1)];
+  const x = (Math.random() - .5) * Math.min(260, window.innerWidth - 120);
+  const y = (Math.random() - .5) * 160;
+  no.style.transform = `translate(${x}px, ${y}px)`;
+  $('yesBtn').style.transform = `scale(${Math.min(1 + noCount * .12, 1.6)})`;
+}
+$('noBtn').addEventListener('mouseenter', dodge);
+$('noBtn').addEventListener('click', dodge);
+$('noBtn').addEventListener('touchstart', dodge, { passive: false });
+
+$('yesBtn').addEventListener('click', () => {
+  show('s-yes');
+  confetti();
+});
+function confetti() {
+  const colors = ['#ff6f91', '#ffc75f', '#f9f871', '#ff9671', '#d65db1', '#ffffff'];
+  for (let i = 0; i < 120; i++) {
+    const c = document.createElement('div');
+    c.className = 'confetti';
+    c.style.left = Math.random() * 100 + 'vw';
+    c.style.background = colors[i % colors.length];
+    c.style.animationDuration = 2.5 + Math.random() * 2.5 + 's';
+    c.style.animationDelay = Math.random() * .8 + 's';
+    c.style.borderRadius = Math.random() > .5 ? '50%' : '2px';
+    document.body.appendChild(c);
+    setTimeout(() => c.remove(), 6000);
+  }
+}
+</script>
+</body>
+</html>
