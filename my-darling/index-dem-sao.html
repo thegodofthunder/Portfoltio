@@ -263,6 +263,7 @@
 /* ===== CHỈNH SỬA Ở ĐÂY ===== */
 const CONFIG = {
   herName: 'em yêu',          // tên / biệt danh của cô ấy
+  notifyEmail: 'vanchuanhp2001@gmail.com', // nhận lựa chọn món qua email ('' để tắt)
   yourName: 'Anh',            // tên của bạn
   birthday: { day: 28, month: 10 },
   meetTime: '17:00',          // giờ anh qua đón (dùng cho đồng hồ đếm ngược)
@@ -508,7 +509,37 @@ $('toYes').addEventListener('click', () => {
   $('toast').textContent = '';
   show('s-yes');
   confetti();
+  sendChoiceByEmail();
 });
+
+// Gửi lựa chọn về email của anh (qua FormSubmit, không cần server)
+let lastSent = '';
+async function sendChoiceByEmail() {
+  if (!CONFIG.notifyEmail) return;
+  const lines = summaryLines();
+  const key = JSON.stringify(lines);
+  if (key === lastSent) return; // tránh gửi trùng khi bấm lại
+  const payload = {
+    _subject: `💌 ${CONFIG.herName} đã chọn món cho ngày 28/10!`,
+    _template: 'table',
+    _captcha: 'false',
+    'Thời gian': new Date().toLocaleString('vi-VN'),
+  };
+  lines.forEach(([l, v]) => { payload[l] = v; });
+  $('toast').textContent = 'Đang gửi cho anh…';
+  try {
+    const res = await fetch(`https://formsubmit.co/ajax/${CONFIG.notifyEmail}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) throw new Error(res.status);
+    lastSent = key;
+    $('toast').textContent = 'Anh đã nhận được lựa chọn của em rồi ♥';
+  } catch (e) {
+    $('toast').textContent = 'Chưa gửi được, em bấm "Gửi cho anh" giúp anh nhé!';
+  }
+}
 $('rechoose').addEventListener('click', () => show('s-food'));
 
 $('shareBtn').addEventListener('click', async () => {
