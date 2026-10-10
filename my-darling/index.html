@@ -133,6 +133,32 @@
   @keyframes beat { 0%,100% { transform: scale(1); } 30% { transform: scale(1.2); } 60% { transform: scale(.95); } }
   .signature { font-family: 'Dancing Script', cursive; font-size: 26px; color: var(--pink-dark); margin-top: 10px; }
 
+  /* food picker */
+  .food-group { text-align: left; margin-bottom: 18px; }
+  .food-group h3 { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
+  .food-group h3 small { font-weight: 400; color: var(--muted); }
+  .food-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; }
+  .food-opt {
+    font-family: inherit; font-size: 15px; color: var(--ink); cursor: pointer;
+    background: var(--cream); border: 2px solid transparent; border-radius: 14px;
+    padding: 10px 8px; display: flex; flex-direction: column; align-items: center; gap: 4px;
+    transition: transform .15s, border-color .15s, background .15s;
+  }
+  .food-opt span { font-size: 28px; }
+  .food-opt:hover { transform: translateY(-2px); }
+  .food-opt[aria-pressed="true"] { border-color: var(--pink); background: #ffe3ec; }
+  .note {
+    width: 100%; font-family: inherit; font-size: 15px; color: var(--ink);
+    border: 2px solid #ffd6e0; border-radius: 14px; padding: 10px 12px; resize: vertical;
+  }
+  .note:focus { outline: none; border-color: var(--pink); }
+  .btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+  .summary { text-align: left; background: var(--cream); border-radius: 16px; padding: 14px 16px; margin: 6px 0 18px; }
+  .summary div { padding: 4px 0; font-size: 16px; }
+  .summary b { color: var(--pink-dark); }
+  .actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .toast { font-size: 14px; color: var(--muted); min-height: 1.4em; margin-top: 10px; }
+
   .confetti {
     position: fixed; top: -12px; width: 10px; height: 14px; z-index: 5; pointer-events: none;
     animation: fall linear forwards;
@@ -190,12 +216,31 @@
   </div>
 </section>
 
-<!-- 5. Kết -->
+<!-- 5. Chọn món -->
+<section class="screen" id="s-food">
+  <div class="card">
+    <h2>Tối đó em muốn ăn gì nè? 😋</h2>
+    <div id="foodGroups"></div>
+    <div class="food-group">
+      <h3>Ghi chú cho anh <small>(tùy chọn)</small></h3>
+      <textarea class="note" id="foodNote" rows="2" placeholder="VD: ít cay, không hành…"></textarea>
+    </div>
+    <button class="btn" id="toYes" disabled>Chốt món 💖</button>
+  </div>
+</section>
+
+<!-- 6. Kết -->
 <section class="screen" id="s-yes">
   <div class="card">
     <div class="big-heart">💖</div>
     <h1>Yayyy!</h1>
     <p id="finalMsg"></p>
+    <div class="summary" id="summary"></div>
+    <div class="actions">
+      <button class="btn" id="shareBtn">Gửi cho anh 💌</button>
+      <button class="btn ghost" id="rechoose">Chọn lại món</button>
+    </div>
+    <p class="toast" id="toast"></p>
     <p class="signature" id="signature"></p>
   </div>
 </section>
@@ -220,6 +265,34 @@ Anh đã chuẩn bị một chút kế hoạch nhỏ… em xem thử nhé!`,
     { icon: '🌃', time: '20:30', title: 'Dạo phố ngắm đèn', desc: 'Tay trong tay, kể nhau nghe chuyện cả năm' },
     { icon: '🎁', time: '21:30', title: 'Bất ngờ cuối ngày', desc: 'Bí mật! Đến lúc đó em sẽ biết 🤫' },
   ],
+  food: {
+    main: {
+      label: 'Món chính', required: true, options: [
+        { icon: '🍲', name: 'Lẩu' },
+        { icon: '🥩', name: 'Bò bít tết' },
+        { icon: '🍣', name: 'Sushi' },
+        { icon: '🍝', name: 'Mì Ý' },
+        { icon: '🍖', name: 'Nướng BBQ' },
+        { icon: '🍕', name: 'Pizza' },
+      ],
+    },
+    dessert: {
+      label: 'Tráng miệng', options: [
+        { icon: '🎂', name: 'Bánh kem' },
+        { icon: '🍨', name: 'Kem' },
+        { icon: '🍮', name: 'Bánh flan' },
+        { icon: '🧁', name: 'Cupcake' },
+      ],
+    },
+    drink: {
+      label: 'Đồ uống', options: [
+        { icon: '🧋', name: 'Trà sữa' },
+        { icon: '🍹', name: 'Nước ép' },
+        { icon: '☕', name: 'Cà phê' },
+        { icon: '🍷', name: 'Rượu vang' },
+      ],
+    },
+  },
   finalMsg: 'Vậy là chốt rồi nhé! Hẹn em ngày 28/10, nhớ để dành cả buổi tối cho anh. Yêu em nhiều lắm 💕',
 };
 /* =========================== */
@@ -322,9 +395,68 @@ $('noBtn').addEventListener('mouseenter', dodge);
 $('noBtn').addEventListener('click', dodge);
 $('noBtn').addEventListener('touchstart', dodge, { passive: false });
 
-$('yesBtn').addEventListener('click', () => {
+$('yesBtn').addEventListener('click', () => show('s-food'));
+
+// Food picker
+const STORE_KEY = 'darling-food-choice';
+let choice = { note: '' };
+try { choice = { ...choice, ...JSON.parse(localStorage.getItem(STORE_KEY) || '{}') }; } catch (e) {}
+const save = () => { try { localStorage.setItem(STORE_KEY, JSON.stringify(choice)); } catch (e) {} };
+
+$('foodGroups').innerHTML = Object.entries(CONFIG.food).map(([key, g]) =>
+  `<div class="food-group">
+    <h3>${g.label} <small>${g.required ? '(chọn 1)' : '(tùy chọn)'}</small></h3>
+    <div class="food-grid">${g.options.map(o =>
+      `<button type="button" class="food-opt" data-group="${key}" data-name="${o.name}" aria-pressed="false"><span>${o.icon}</span>${o.name}</button>`
+    ).join('')}</div>
+  </div>`
+).join('');
+
+function renderFood() {
+  document.querySelectorAll('.food-opt').forEach(b =>
+    b.setAttribute('aria-pressed', choice[b.dataset.group] === b.dataset.name));
+  $('foodNote').value = choice.note || '';
+  $('toYes').disabled = Object.entries(CONFIG.food).some(([k, g]) => g.required && !choice[k]);
+}
+$('foodGroups').addEventListener('click', e => {
+  const b = e.target.closest('.food-opt');
+  if (!b) return;
+  const g = b.dataset.group;
+  // bấm lại món đã chọn để bỏ chọn (trừ nhóm bắt buộc)
+  choice[g] = choice[g] === b.dataset.name && !CONFIG.food[g].required ? undefined : b.dataset.name;
+  save(); renderFood();
+});
+$('foodNote').addEventListener('input', e => { choice.note = e.target.value; save(); });
+renderFood();
+
+function summaryLines() {
+  const lines = Object.entries(CONFIG.food)
+    .filter(([k]) => choice[k])
+    .map(([k, g]) => [g.label, choice[k]]);
+  if (choice.note && choice.note.trim()) lines.push(['Ghi chú', choice.note.trim()]);
+  return lines;
+}
+const esc = t => t.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+$('toYes').addEventListener('click', () => {
+  $('summary').innerHTML = '<div><b>Em đã chọn:</b></div>' +
+    summaryLines().map(([l, v]) => `<div>• ${l}: <b>${esc(v)}</b></div>`).join('');
+  $('toast').textContent = '';
   show('s-yes');
   confetti();
+});
+$('rechoose').addEventListener('click', () => show('s-food'));
+
+$('shareBtn').addEventListener('click', async () => {
+  const text = `Em đồng ý đi chơi sinh nhật 28/10 rồi nha 💖\n` +
+    summaryLines().map(([l, v]) => `${l}: ${v}`).join('\n');
+  try {
+    if (navigator.share) { await navigator.share({ text }); return; }
+    await navigator.clipboard.writeText(text);
+    $('toast').textContent = 'Đã sao chép! Em dán vào tin nhắn gửi anh nhé 💕';
+  } catch (e) {
+    if (e.name !== 'AbortError') $('toast').textContent = text;
+  }
 });
 function confetti() {
   const colors = ['#ff6f91', '#ffc75f', '#f9f871', '#ff9671', '#d65db1', '#ffffff'];
