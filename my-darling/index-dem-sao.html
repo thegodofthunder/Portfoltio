@@ -1,0 +1,534 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lời mời cho em ✨</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Be+Vietnam+Pro:wght@300;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sky-top: #070b1a;
+    --sky-bottom: #1b2a4e;
+    --gold: #e8c878;
+    --gold-soft: #f3d98b;
+    --gold-deep: #c99a3c;
+    --ink: #ece6d6;
+    --muted: #a7a9c4;
+    --glass: rgba(255, 255, 255, .05);
+    --glass-hi: rgba(255, 255, 255, .1);
+    --line: rgba(232, 200, 120, .35);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: 'Be Vietnam Pro', system-ui, sans-serif; font-weight: 300;
+    color: var(--ink);
+    background: radial-gradient(ellipse at bottom, var(--sky-bottom) 0%, var(--sky-top) 70%) fixed;
+    background-color: var(--sky-top);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  h1, h2, .serif { font-family: 'Cormorant Garamond', serif; font-weight: 600; }
+
+  /* starfield + shooting stars + fireworks */
+  #sky { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+  .moon {
+    position: fixed; top: 6vh; right: 8vw; width: 70px; height: 70px; border-radius: 50%; z-index: 0;
+    background: radial-gradient(circle at 35% 35%, #fffbe8, #f1dfa6 60%, #d9be72);
+    box-shadow: 0 0 40px 10px rgba(243, 217, 139, .25), 0 0 120px 40px rgba(243, 217, 139, .08);
+    pointer-events: none;
+  }
+
+  .screen {
+    position: relative; z-index: 1;
+    min-height: 100vh; display: none;
+    flex-direction: column; align-items: center; justify-content: center;
+    padding: 32px 16px; text-align: center;
+  }
+  .screen.active { display: flex; animation: fade 1s ease; }
+  @keyframes fade { from { opacity: 0; transform: translateY(16px); filter: blur(4px); } to { opacity: 1; transform: none; filter: none; } }
+
+  .eyebrow { font-size: 12px; letter-spacing: 4px; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; }
+
+  /* envelope */
+  .envelope {
+    position: relative; width: 280px; height: 180px; cursor: pointer;
+    background: #1d2a52; border-radius: 0 0 10px 10px;
+    border: 1px solid var(--line);
+    box-shadow: 0 0 50px rgba(232, 200, 120, .15), 0 20px 40px rgba(0, 0, 0, .5);
+    animation: float 4s ease-in-out infinite;
+  }
+  .envelope::before {
+    content: ''; position: absolute; top: 0; left: 0;
+    border-left: 139px solid transparent; border-right: 139px solid transparent;
+    border-top: 100px solid #24346a; transform-origin: top;
+    transition: transform .7s ease; z-index: 2;
+  }
+  .envelope::after {
+    content: ''; position: absolute; bottom: 0; left: 0;
+    border-left: 139px solid #172243; border-right: 139px solid #172243;
+    border-top: 90px solid transparent; border-radius: 0 0 10px 10px; z-index: 1;
+  }
+  .envelope.open::before { transform: rotateX(180deg); }
+  .envelope .seal {
+    position: absolute; top: 74px; left: 50%; transform: translateX(-50%);
+    width: 52px; height: 52px; border-radius: 50%; z-index: 3;
+    display: grid; place-items: center; font-size: 22px; color: #1b1b2f;
+    background: radial-gradient(circle at 35% 35%, var(--gold-soft), var(--gold-deep));
+    box-shadow: 0 0 20px rgba(232, 200, 120, .6);
+    transition: opacity .3s;
+  }
+  .envelope.open .seal { opacity: 0; }
+  @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+  .hint { margin-top: 32px; color: var(--muted); font-size: 15px; letter-spacing: .5px; }
+
+  .card {
+    background: var(--glass);
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    border: 1px solid var(--line);
+    border-radius: 20px; padding: 36px 28px;
+    max-width: 520px; width: 100%;
+    box-shadow: 0 0 60px rgba(232, 200, 120, .08), 0 20px 50px rgba(0, 0, 0, .4);
+  }
+  .card h1 { font-size: 46px; color: var(--gold); line-height: 1.15; margin-bottom: 14px; }
+  .card h2 { font-size: 34px; color: var(--gold); line-height: 1.2; margin-bottom: 16px; }
+  .card p { font-size: 16px; line-height: 1.8; margin-bottom: 14px; }
+  .typed { min-height: 8em; white-space: pre-line; text-align: left; font-family: 'Cormorant Garamond', serif; font-size: 20px !important; font-weight: 500; }
+  .typed::after { content: '|'; animation: blink 1s infinite; color: var(--gold); }
+  .typed.done::after { content: ''; }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  .btn {
+    font-family: inherit; font-size: 15px; font-weight: 500; letter-spacing: .3px;
+    border: 1px solid transparent; border-radius: 999px; padding: 13px 30px; cursor: pointer;
+    background: linear-gradient(135deg, var(--gold-soft), var(--gold-deep)); color: #1b1b2f;
+    box-shadow: 0 0 24px rgba(232, 200, 120, .35);
+    transition: transform .15s, box-shadow .2s;
+    white-space: nowrap;
+  }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 0 34px rgba(232, 200, 120, .55); }
+  .btn.ghost { background: transparent; color: var(--gold); border-color: var(--gold); box-shadow: none; }
+  .btn[hidden] { display: none; }
+  .btn:disabled { opacity: .4; cursor: not-allowed; transform: none; box-shadow: none; }
+  .btn:focus-visible, .food-opt:focus-visible, .envelope:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+
+  .date-badge {
+    display: inline-block; margin: 4px 0 22px;
+    font-family: 'Cormorant Garamond', serif; font-size: 24px; font-weight: 600; color: var(--gold);
+    border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 6px 18px;
+  }
+  .countdown { display: flex; gap: 10px; justify-content: center; margin: 4px 0 26px; flex-wrap: wrap; }
+  .countdown div {
+    background: var(--glass); border: 1px solid var(--line); border-radius: 12px; padding: 10px 6px; min-width: 66px;
+  }
+  .countdown b { display: block; font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 600; color: var(--gold-soft); line-height: 1.1; }
+  .countdown small { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 2px; }
+  .today { font-family: 'Cormorant Garamond', serif; font-size: 28px; color: var(--gold); }
+
+  .timeline { text-align: left; margin: 10px 0 24px; }
+  .timeline li {
+    list-style: none; position: relative; padding: 0 0 18px 34px;
+    border-left: 1px solid var(--line); margin-left: 12px;
+  }
+  .timeline li:last-child { border-left-color: transparent; padding-bottom: 0; }
+  .timeline li::before {
+    content: attr(data-icon); position: absolute; left: -14px; top: -2px;
+    width: 28px; height: 28px; border-radius: 50%; background: var(--sky-bottom);
+    border: 1px solid var(--line);
+    display: grid; place-items: center; font-size: 14px;
+  }
+  .timeline .time { font-weight: 500; color: var(--gold); }
+  .timeline .desc { font-size: 14px; color: var(--muted); }
+
+  .question { font-size: 38px !important; margin-bottom: 26px; }
+  .choices { position: relative; display: flex; gap: 16px; justify-content: center; min-height: 60px; }
+  #noBtn { transition: transform .25s ease; }
+
+  .big-star { font-size: 72px; color: var(--gold-soft); text-shadow: 0 0 30px rgba(243, 217, 139, .8); animation: glow 2s ease-in-out infinite; line-height: 1; margin-bottom: 8px; }
+  @keyframes glow { 0%,100% { transform: scale(1) rotate(0); opacity: .85; } 50% { transform: scale(1.12) rotate(8deg); opacity: 1; } }
+  .signature { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 24px; color: var(--gold); margin-top: 10px; }
+
+  /* food picker */
+  .food-group { text-align: left; margin-bottom: 18px; }
+  .food-group h3 { font-size: 15px; font-weight: 500; margin-bottom: 8px; color: var(--ink); }
+  .food-group h3 small { font-weight: 300; color: var(--muted); }
+  .food-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; }
+  .food-opt {
+    font-family: inherit; font-size: 14px; color: var(--ink); cursor: pointer;
+    background: var(--glass); border: 1px solid rgba(255, 255, 255, .12); border-radius: 14px;
+    padding: 10px 8px; display: flex; flex-direction: column; align-items: center; gap: 4px;
+    transition: transform .15s, border-color .15s, background .15s, box-shadow .15s;
+  }
+  .food-opt span { font-size: 26px; }
+  .food-opt:hover { transform: translateY(-2px); background: var(--glass-hi); }
+  .food-opt[aria-pressed="true"] { border-color: var(--gold); background: rgba(232, 200, 120, .12); box-shadow: 0 0 18px rgba(232, 200, 120, .25); color: var(--gold-soft); }
+  .note {
+    width: 100%; font-family: inherit; font-size: 15px; color: var(--ink);
+    background: var(--glass); border: 1px solid rgba(255, 255, 255, .15); border-radius: 14px; padding: 10px 12px; resize: vertical;
+  }
+  .note::placeholder { color: var(--muted); }
+  .note:focus { outline: none; border-color: var(--gold); }
+  .summary { text-align: left; background: var(--glass); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; margin: 6px 0 18px; }
+  .summary div { padding: 4px 0; font-size: 15px; }
+  .summary b { color: var(--gold); font-weight: 500; }
+  .actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .toast { font-size: 14px; color: var(--muted); min-height: 1.4em; margin-top: 10px; }
+
+  @media (max-width: 420px) {
+    .card { padding: 28px 18px; }
+    .card h1 { font-size: 40px; }
+    .question { font-size: 32px !important; }
+    .envelope { transform: scale(.9); }
+    .moon { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+<canvas id="sky" aria-hidden="true"></canvas>
+<div class="moon" aria-hidden="true"></div>
+
+<!-- 1. Phong bì -->
+<section class="screen active" id="s-envelope">
+  <p class="eyebrow">28 · 10</p>
+  <div class="envelope" id="envelope" role="button" tabindex="0" aria-label="Mở thư"><div class="seal">★</div></div>
+  <p class="hint">Có một lá thư dành cho <span id="nameHint"></span> dưới bầu trời sao… chạm để mở nhé ✨</p>
+</section>
+
+<!-- 2. Lá thư -->
+<section class="screen" id="s-letter">
+  <div class="card">
+    <h1 id="greeting"></h1>
+    <p class="typed" id="typed"></p>
+    <button class="btn" id="toPlan" hidden>Đọc tiếp nè ✦</button>
+  </div>
+</section>
+
+<!-- 3. Kế hoạch -->
+<section class="screen" id="s-plan">
+  <div class="card">
+    <p class="eyebrow">Đêm của em</p>
+    <h2>Ngày đặc biệt của em</h2>
+    <div class="date-badge" id="dateBadge"></div>
+    <div class="countdown" id="countdown"></div>
+    <ul class="timeline" id="timeline"></ul>
+    <button class="btn" id="toAsk">Vậy em có đồng ý không? 🌙</button>
+  </div>
+</section>
+
+<!-- 4. Câu hỏi -->
+<section class="screen" id="s-ask">
+  <div class="card">
+    <h2 class="question">Em đi chơi với anh<br>vào sinh nhật nhé?</h2>
+    <div class="choices">
+      <button class="btn" id="yesBtn">Đồng ý ✨</button>
+      <button class="btn ghost" id="noBtn">Không</button>
+    </div>
+  </div>
+</section>
+
+<!-- 5. Chọn món -->
+<section class="screen" id="s-food">
+  <div class="card">
+    <h2>Tối đó em muốn ăn gì nè? 😋</h2>
+    <div id="foodGroups"></div>
+    <div class="food-group">
+      <h3>Ghi chú cho anh <small>(tùy chọn)</small></h3>
+      <textarea class="note" id="foodNote" rows="2" placeholder="VD: ít cay, không hành…"></textarea>
+    </div>
+    <button class="btn" id="toYes" disabled>Chốt món ✨</button>
+  </div>
+</section>
+
+<!-- 6. Kết -->
+<section class="screen" id="s-yes">
+  <div class="card">
+    <div class="big-star" aria-hidden="true">✦</div>
+    <h1>Hẹn em dưới bầu trời sao</h1>
+    <p id="finalMsg"></p>
+    <div class="summary" id="summary"></div>
+    <div class="actions">
+      <button class="btn" id="shareBtn">Gửi cho anh 💫</button>
+      <button class="btn ghost" id="rechoose">Chọn lại món</button>
+    </div>
+    <p class="toast" id="toast"></p>
+    <p class="signature" id="signature"></p>
+  </div>
+</section>
+
+<script>
+/* ===== CHỈNH SỬA Ở ĐÂY ===== */
+const CONFIG = {
+  herName: 'em yêu',          // tên / biệt danh của cô ấy
+  yourName: 'Anh',            // tên của bạn
+  birthday: { day: 28, month: 10 },
+  meetTime: '17:00',          // giờ anh qua đón (dùng cho đồng hồ đếm ngược)
+  letter:
+`Chúc mừng sinh nhật sớm nha em 🎂
+
+Cảm ơn em vì đã xuất hiện và làm mỗi ngày của anh trở nên dịu dàng hơn.
+Năm nay anh muốn dành trọn ngày 28/10 để làm em cười thật nhiều.
+Anh đã chuẩn bị một chút kế hoạch nhỏ… em xem thử nhé!`,
+  plan: [
+    { icon: '🚗', time: '17:00', title: 'Anh qua đón em', desc: 'Em chỉ cần xinh đẹp như mọi ngày thôi' },
+    { icon: '🍝', time: '18:00', title: 'Bữa tối lãng mạn', desc: 'Một nhà hàng nhỏ, ấm cúng anh đã đặt bàn' },
+    { icon: '🎂', time: '19:30', title: 'Thổi nến & ước nguyện', desc: 'Bánh kem vị em thích nhất' },
+    { icon: '🌃', time: '20:30', title: 'Dạo phố ngắm đèn', desc: 'Tay trong tay, kể nhau nghe chuyện cả năm' },
+    { icon: '🎁', time: '21:30', title: 'Bất ngờ cuối ngày', desc: 'Bí mật! Đến lúc đó em sẽ biết 🤫' },
+  ],
+  food: {
+    main: {
+      label: 'Món chính', required: true, options: [
+        { icon: '🍲', name: 'Lẩu' },
+        { icon: '🥩', name: 'Bò bít tết' },
+        { icon: '🍣', name: 'Sushi' },
+        { icon: '🍝', name: 'Mì Ý' },
+        { icon: '🍖', name: 'Nướng BBQ' },
+        { icon: '🍕', name: 'Pizza' },
+      ],
+    },
+    dessert: {
+      label: 'Tráng miệng', options: [
+        { icon: '🎂', name: 'Bánh kem' },
+        { icon: '🍨', name: 'Kem' },
+        { icon: '🍮', name: 'Bánh flan' },
+        { icon: '🧁', name: 'Cupcake' },
+      ],
+    },
+    drink: {
+      label: 'Đồ uống', options: [
+        { icon: '🧋', name: 'Trà sữa' },
+        { icon: '🍹', name: 'Nước ép' },
+        { icon: '☕', name: 'Cà phê' },
+        { icon: '🍷', name: 'Rượu vang' },
+      ],
+    },
+  },
+  finalMsg: 'Vậy là chốt rồi nhé! Hẹn em ngày 28/10, nhớ để dành cả buổi tối cho anh. Yêu em nhiều lắm 💕',
+};
+/* =========================== */
+
+const $ = id => document.getElementById(id);
+const show = id => {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  $(id).classList.add('active');
+  window.scrollTo(0, 0);
+};
+
+// Night sky: twinkling stars, shooting stars, fireworks
+const sky = $('sky');
+const ctx = sky.getContext('2d');
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+let W, H, stars = [], meteors = [], sparks = [];
+function resize() {
+  const dpr = window.devicePixelRatio || 1;
+  W = window.innerWidth; H = window.innerHeight;
+  sky.width = W * dpr; sky.height = H * dpr;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  stars = Array.from({ length: Math.round(W * H / 4500) }, () => ({
+    x: Math.random() * W, y: Math.random() * H,
+    r: Math.random() * 1.3 + .2,
+    phase: Math.random() * Math.PI * 2,
+    speed: .5 + Math.random() * 1.5,
+    gold: Math.random() < .12,
+  }));
+}
+resize();
+window.addEventListener('resize', resize);
+
+function spawnMeteor() {
+  meteors.push({ x: Math.random() * W * .8 + W * .2, y: Math.random() * H * .4, vx: -7 - Math.random() * 4, vy: 3 + Math.random() * 2, life: 1 });
+}
+function firework(x, y) {
+  const colors = ['#f3d98b', '#e8c878', '#ffffff', '#ffb3c7', '#a8c5ff'];
+  const color = colors[Math.floor(Math.random() * colors.length)];
+  for (let i = 0; i < 70; i++) {
+    const a = Math.random() * Math.PI * 2, v = 1 + Math.random() * 4;
+    sparks.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, life: 1, color });
+  }
+}
+function draw(t) {
+  ctx.clearRect(0, 0, W, H);
+  for (const s of stars) {
+    const a = reduceMotion ? .7 : .35 + .65 * Math.abs(Math.sin(s.phase + t / 1000 * s.speed));
+    ctx.globalAlpha = a;
+    ctx.fillStyle = s.gold ? '#f3d98b' : '#ffffff';
+    ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2); ctx.fill();
+  }
+  for (const m of meteors) {
+    const g = ctx.createLinearGradient(m.x, m.y, m.x - m.vx * 12, m.y - m.vy * 12);
+    g.addColorStop(0, `rgba(255,248,220,${m.life})`); g.addColorStop(1, 'rgba(255,248,220,0)');
+    ctx.globalAlpha = 1; ctx.strokeStyle = g; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(m.x, m.y); ctx.lineTo(m.x - m.vx * 12, m.y - m.vy * 12); ctx.stroke();
+    m.x += m.vx; m.y += m.vy; m.life -= .012;
+  }
+  meteors = meteors.filter(m => m.life > 0);
+  for (const p of sparks) {
+    ctx.globalAlpha = Math.max(p.life, 0); ctx.fillStyle = p.color;
+    ctx.beginPath(); ctx.arc(p.x, p.y, 2, 0, Math.PI * 2); ctx.fill();
+    p.x += p.vx; p.y += p.vy; p.vy += .05; p.vx *= .98; p.vy *= .98; p.life -= .012;
+  }
+  sparks = sparks.filter(p => p.life > 0);
+  ctx.globalAlpha = 1;
+  if (!reduceMotion) requestAnimationFrame(draw);
+}
+requestAnimationFrame(draw);
+if (!reduceMotion) setInterval(() => Math.random() < .5 && spawnMeteor(), 2500);
+
+// Text setup
+$('nameHint').textContent = CONFIG.herName;
+$('greeting').textContent = `Gửi ${CONFIG.herName} ♡`;
+$('finalMsg').textContent = CONFIG.finalMsg;
+$('signature').textContent = `— ${CONFIG.yourName} —`;
+
+// Next birthday date (this year, or next year if passed)
+function nextBirthday() {
+  const now = new Date();
+  const [hh, mm] = CONFIG.meetTime.split(':').map(Number);
+  let d = new Date(now.getFullYear(), CONFIG.birthday.month - 1, CONFIG.birthday.day, hh, mm);
+  const endOfDay = new Date(d); endOfDay.setHours(23, 59, 59);
+  if (now > endOfDay) d.setFullYear(d.getFullYear() + 1);
+  return d;
+}
+const bday = nextBirthday();
+const weekdays = ['Chủ nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
+$('dateBadge').textContent =
+  `${weekdays[bday.getDay()]}, ${String(bday.getDate()).padStart(2, '0')}/${String(bday.getMonth() + 1).padStart(2, '0')}/${bday.getFullYear()}`;
+
+function tick() {
+  const diff = bday - new Date();
+  if (diff <= 0) {
+    $('countdown').innerHTML = '<p class="today">Chính là đêm nay đó! ✨</p>';
+    return;
+  }
+  const units = [
+    ['Ngày', Math.floor(diff / 864e5)],
+    ['Giờ', Math.floor(diff / 36e5) % 24],
+    ['Phút', Math.floor(diff / 6e4) % 60],
+    ['Giây', Math.floor(diff / 1e3) % 60],
+  ];
+  $('countdown').innerHTML = units.map(([l, v]) => `<div><b>${String(v).padStart(2, '0')}</b><small>${l}</small></div>`).join('');
+}
+tick(); setInterval(tick, 1000);
+
+$('timeline').innerHTML = CONFIG.plan.map(p =>
+  `<li data-icon="${p.icon}"><div><span class="time">${p.time}</span> · ${p.title}</div><div class="desc">${p.desc}</div></li>`
+).join('');
+
+// Envelope → letter with typewriter
+$('envelope').addEventListener('keydown', e => {
+  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); $('envelope').click(); }
+});
+$('envelope').addEventListener('click', () => {
+  $('envelope').classList.add('open');
+  setTimeout(() => { show('s-letter'); typeLetter(); }, 700);
+});
+function typeLetter() {
+  const el = $('typed'); let i = 0;
+  const text = CONFIG.letter;
+  const step = () => {
+    el.textContent = text.slice(0, ++i);
+    if (i < text.length) setTimeout(step, 35);
+    else { el.classList.add('done'); $('toPlan').hidden = false; }
+  };
+  step();
+  // tap to skip
+  el.addEventListener('click', () => { i = text.length - 1; }, { once: true });
+}
+
+$('toPlan').addEventListener('click', () => show('s-plan'));
+$('toAsk').addEventListener('click', () => show('s-ask'));
+
+// "No" button runs away, "Yes" grows
+const noTexts = ['Không', 'Chắc chưa?', 'Nghĩ lại đi mà 🥺', 'Thôi mà…', 'Không được đâu 😤', 'Bấm nút kia đi!'];
+let noCount = 0;
+function dodge(e) {
+  e.preventDefault();
+  noCount++;
+  const no = $('noBtn');
+  no.textContent = noTexts[Math.min(noCount, noTexts.length - 1)];
+  const x = (Math.random() - .5) * Math.min(260, window.innerWidth - 120);
+  const y = (Math.random() - .5) * 160;
+  no.style.transform = `translate(${x}px, ${y}px)`;
+  $('yesBtn').style.transform = `scale(${Math.min(1 + noCount * .12, 1.6)})`;
+}
+$('noBtn').addEventListener('mouseenter', dodge);
+$('noBtn').addEventListener('click', dodge);
+$('noBtn').addEventListener('touchstart', dodge, { passive: false });
+
+$('yesBtn').addEventListener('click', () => show('s-food'));
+
+// Food picker
+const STORE_KEY = 'darling-food-choice';
+let choice = { note: '' };
+try { choice = { ...choice, ...JSON.parse(localStorage.getItem(STORE_KEY) || '{}') }; } catch (e) {}
+const save = () => { try { localStorage.setItem(STORE_KEY, JSON.stringify(choice)); } catch (e) {} };
+
+$('foodGroups').innerHTML = Object.entries(CONFIG.food).map(([key, g]) =>
+  `<div class="food-group">
+    <h3>${g.label} <small>${g.required ? '(chọn 1)' : '(tùy chọn)'}</small></h3>
+    <div class="food-grid">${g.options.map(o =>
+      `<button type="button" class="food-opt" data-group="${key}" data-name="${o.name}" aria-pressed="false"><span>${o.icon}</span>${o.name}</button>`
+    ).join('')}</div>
+  </div>`
+).join('');
+
+function renderFood() {
+  document.querySelectorAll('.food-opt').forEach(b =>
+    b.setAttribute('aria-pressed', choice[b.dataset.group] === b.dataset.name));
+  $('foodNote').value = choice.note || '';
+  $('toYes').disabled = Object.entries(CONFIG.food).some(([k, g]) => g.required && !choice[k]);
+}
+$('foodGroups').addEventListener('click', e => {
+  const b = e.target.closest('.food-opt');
+  if (!b) return;
+  const g = b.dataset.group;
+  // bấm lại món đã chọn để bỏ chọn (trừ nhóm bắt buộc)
+  choice[g] = choice[g] === b.dataset.name && !CONFIG.food[g].required ? undefined : b.dataset.name;
+  save(); renderFood();
+});
+$('foodNote').addEventListener('input', e => { choice.note = e.target.value; save(); });
+renderFood();
+
+function summaryLines() {
+  const lines = Object.entries(CONFIG.food)
+    .filter(([k]) => choice[k])
+    .map(([k, g]) => [g.label, choice[k]]);
+  if (choice.note && choice.note.trim()) lines.push(['Ghi chú', choice.note.trim()]);
+  return lines;
+}
+const esc = t => t.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+$('toYes').addEventListener('click', () => {
+  $('summary').innerHTML = '<div><b>Em đã chọn:</b></div>' +
+    summaryLines().map(([l, v]) => `<div>• ${l}: <b>${esc(v)}</b></div>`).join('');
+  $('toast').textContent = '';
+  show('s-yes');
+  confetti();
+});
+$('rechoose').addEventListener('click', () => show('s-food'));
+
+$('shareBtn').addEventListener('click', async () => {
+  const text = `Em đồng ý đi chơi sinh nhật 28/10 rồi nha 💖\n` +
+    summaryLines().map(([l, v]) => `${l}: ${v}`).join('\n');
+  try {
+    if (navigator.share) { await navigator.share({ text }); return; }
+    await navigator.clipboard.writeText(text);
+    $('toast').textContent = 'Đã sao chép! Em dán vào tin nhắn gửi anh nhé 💕';
+  } catch (e) {
+    if (e.name !== 'AbortError') $('toast').textContent = text;
+  }
+});
+function confetti() {
+  if (reduceMotion) return;
+  for (let i = 0; i < 6; i++) {
+    setTimeout(() => firework(W * (.15 + Math.random() * .7), H * (.15 + Math.random() * .35)), i * 450);
+    setTimeout(spawnMeteor, i * 300);
+  }
+}
+</script>
+</body>
+</html>

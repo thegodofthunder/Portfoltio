@@ -1,0 +1,538 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Level 28 ♥</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #2d1b4e;
+    --grid: #3a2563;
+    --paper: #fff4e0;
+    --ink: #1a1a1a;
+    --pink: #ff5c8a;
+    --pink-dark: #d63a6a;
+    --yellow: #ffd23f;
+    --mint: #3ddc97;
+    --sky: #6ec6ff;
+    --muted: #7a6a8a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: 'VT323', monospace; font-size: 22px; line-height: 1.25;
+    color: var(--ink);
+    background-color: var(--bg);
+    background-image:
+      linear-gradient(var(--grid) 2px, transparent 2px),
+      linear-gradient(90deg, var(--grid) 2px, transparent 2px);
+    background-size: 32px 32px;
+    min-height: 100vh;
+    overflow-x: hidden;
+    image-rendering: pixelated;
+  }
+  .px { font-family: 'Press Start 2P', monospace; } /* chỉ dùng cho chữ KHÔNG dấu */
+
+  /* HUD */
+  .hud {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 10;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 10px 16px; background: rgba(26, 16, 46, .85); border-bottom: 4px solid var(--ink);
+    color: white;
+  }
+  .hud .lv { font-size: 10px; color: var(--yellow); }
+  .hp { display: flex; gap: 4px; font-size: 26px; line-height: 1; }
+  .hp span { color: #4a3a66; transition: color .2s, transform .2s; }
+  .hp span.on { color: var(--pink); transform: scale(1.15); }
+  .sound {
+    font-family: 'Press Start 2P', monospace; font-size: 9px; cursor: pointer;
+    background: var(--paper); color: var(--ink); border: 3px solid var(--ink); padding: 6px 8px;
+    box-shadow: 3px 3px 0 var(--pink);
+  }
+
+  /* floating pixel stars */
+  .bg-float { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+  .bg-float span {
+    position: absolute; bottom: -30px; color: var(--yellow); font-family: 'Press Start 2P', monospace;
+    animation: rise linear forwards;
+  }
+  @keyframes rise { to { transform: translateY(-115vh); opacity: .2; } }
+
+  .screen {
+    position: relative; z-index: 1;
+    min-height: 100vh; display: none;
+    flex-direction: column; align-items: center; justify-content: center;
+    padding: 84px 16px 32px; text-align: center;
+  }
+  .screen.active { display: flex; animation: pop .35s steps(4); }
+  @keyframes pop { from { transform: scale(.85); opacity: 0; } to { transform: none; opacity: 1; } }
+
+  /* pixel heart sprite */
+  .sprite { --p: 10px; --c: var(--pink); width: calc(7 * var(--p)); height: calc(6 * var(--p)); position: relative; margin: 0 auto 28px; }
+  .sprite::before {
+    content: ''; position: absolute; top: 0; left: 0; width: var(--p); height: var(--p);
+    box-shadow: calc(1*var(--p)) calc(0*var(--p)) var(--c), calc(2*var(--p)) calc(0*var(--p)) var(--c), calc(4*var(--p)) calc(0*var(--p)) var(--c), calc(5*var(--p)) calc(0*var(--p)) var(--c), calc(0*var(--p)) calc(1*var(--p)) var(--c), calc(1*var(--p)) calc(1*var(--p)) var(--c), calc(2*var(--p)) calc(1*var(--p)) var(--c), calc(3*var(--p)) calc(1*var(--p)) var(--c), calc(4*var(--p)) calc(1*var(--p)) var(--c), calc(5*var(--p)) calc(1*var(--p)) var(--c), calc(6*var(--p)) calc(1*var(--p)) var(--c), calc(0*var(--p)) calc(2*var(--p)) var(--c), calc(1*var(--p)) calc(2*var(--p)) var(--c), calc(2*var(--p)) calc(2*var(--p)) var(--c), calc(3*var(--p)) calc(2*var(--p)) var(--c), calc(4*var(--p)) calc(2*var(--p)) var(--c), calc(5*var(--p)) calc(2*var(--p)) var(--c), calc(6*var(--p)) calc(2*var(--p)) var(--c), calc(1*var(--p)) calc(3*var(--p)) var(--c), calc(2*var(--p)) calc(3*var(--p)) var(--c), calc(3*var(--p)) calc(3*var(--p)) var(--c), calc(4*var(--p)) calc(3*var(--p)) var(--c), calc(5*var(--p)) calc(3*var(--p)) var(--c), calc(2*var(--p)) calc(4*var(--p)) var(--c), calc(3*var(--p)) calc(4*var(--p)) var(--c), calc(4*var(--p)) calc(4*var(--p)) var(--c), calc(3*var(--p)) calc(5*var(--p)) var(--c);
+  }
+  .sprite.bounce { animation: bounce 1s steps(2) infinite; }
+  @keyframes bounce { 50% { transform: translateY(-10px); } }
+
+  .title { font-size: 26px; color: var(--yellow); text-shadow: 4px 4px 0 var(--pink-dark); line-height: 1.5; margin-bottom: 10px; }
+  .subtitle { font-size: 26px; color: white; margin-bottom: 34px; }
+  .blink { animation: blink 1s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  .panel {
+    background: var(--paper); border: 4px solid var(--ink);
+    box-shadow: 8px 8px 0 var(--pink), 8px 8px 0 4px var(--ink);
+    padding: 28px 22px; max-width: 540px; width: 100%; position: relative;
+  }
+  .panel-title { font-size: 12px; line-height: 1.6; color: var(--pink-dark); margin-bottom: 18px; }
+  .panel h2 { font-family: 'VT323', monospace; font-weight: 400; font-size: 36px; line-height: 1.1; margin-bottom: 16px; }
+
+  /* RPG dialog */
+  .dialog { text-align: left; }
+  .nametag {
+    position: absolute; top: -20px; left: 18px; font-size: 10px;
+    background: var(--pink); color: white; border: 4px solid var(--ink); padding: 6px 10px;
+  }
+  .typed { min-height: 8.5em; white-space: pre-line; font-size: 24px; cursor: pointer; }
+  .typed::after { content: '█'; animation: blink .6s steps(1) infinite; color: var(--pink); }
+  .typed.done::after { content: ''; }
+  .next { text-align: right; margin-top: 12px; }
+
+  .btn {
+    font-family: 'VT323', monospace; font-size: 24px; cursor: pointer;
+    background: var(--pink); color: white; border: 4px solid var(--ink);
+    box-shadow: 4px 4px 0 var(--ink); padding: 8px 20px;
+    transition: transform .05s, box-shadow .05s; white-space: nowrap;
+  }
+  .btn.px { font-size: 12px; padding: 14px 20px; }
+  .btn:hover { background: var(--pink-dark); }
+  .btn:active { transform: translate(4px, 4px); box-shadow: 0 0 0 var(--ink); }
+  .btn.ghost { background: white; color: var(--ink); }
+  .btn.yellow { background: var(--yellow); color: var(--ink); }
+  .btn[hidden] { display: none; }
+  .btn:disabled { background: #bbb; color: #666; cursor: not-allowed; }
+  .btn:focus-visible, .item:focus-visible { outline: 4px dashed var(--yellow); outline-offset: 4px; }
+
+  /* quest screen */
+  .date-badge { display: inline-block; font-size: 28px; background: var(--ink); color: var(--yellow); padding: 4px 14px; margin-bottom: 16px; }
+  .timer-label { font-size: 9px; color: var(--muted); margin-bottom: 8px; }
+  .countdown { display: flex; gap: 8px; justify-content: center; margin-bottom: 22px; flex-wrap: wrap; }
+  .countdown div { background: var(--ink); color: var(--mint); border: 4px solid var(--ink); min-width: 64px; padding: 6px 4px; }
+  .countdown b { display: block; font-family: 'Press Start 2P', monospace; font-size: 18px; font-weight: 400; margin-bottom: 6px; }
+  .countdown small { font-size: 18px; color: white; }
+  .today { font-size: 30px; color: var(--pink-dark); }
+
+  .quests { text-align: left; margin-bottom: 22px; list-style: none; }
+  .quests li { display: flex; gap: 12px; align-items: flex-start; padding: 8px 0; border-bottom: 3px dashed #e4d2b4; }
+  .quests li:last-child { border-bottom: none; }
+  .quests .ico { font-size: 22px; width: 38px; height: 38px; flex: none; display: grid; place-items: center; background: white; border: 3px solid var(--ink); }
+  .quests .time { color: var(--pink-dark); }
+  .quests .desc { color: var(--muted); font-size: 20px; }
+
+  .choices { position: relative; display: flex; gap: 18px; justify-content: center; min-height: 64px; }
+  #noBtn { transition: transform .2s steps(3); }
+
+  /* item shop */
+  .shop-group { text-align: left; margin-bottom: 18px; }
+  .shop-group h3 { font-weight: 400; font-size: 24px; margin-bottom: 8px; }
+  .shop-group h3 small { color: var(--muted); }
+  .items { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 10px; }
+  .item {
+    font-family: 'VT323', monospace; font-size: 21px; color: var(--ink); cursor: pointer;
+    background: white; border: 3px solid var(--ink); box-shadow: 3px 3px 0 var(--ink);
+    padding: 8px 6px; display: flex; flex-direction: column; align-items: center; gap: 2px; position: relative;
+  }
+  .item span { font-size: 28px; }
+  .item:hover { background: #fff0f5; }
+  .item[aria-pressed="true"] { background: var(--yellow); }
+  .item[aria-pressed="true"]::after {
+    content: '✓'; position: absolute; top: -10px; right: -10px; width: 24px; height: 24px; display: grid; place-items: center;
+    background: var(--mint); border: 3px solid var(--ink); font-size: 18px;
+  }
+  .note {
+    width: 100%; font-family: 'VT323', monospace; font-size: 22px; color: var(--ink);
+    background: white; border: 3px solid var(--ink); padding: 8px 10px; resize: vertical;
+  }
+  .note:focus { outline: 3px dashed var(--pink); outline-offset: 2px; }
+
+  /* clear screen */
+  .inventory { text-align: left; background: white; border: 3px solid var(--ink); padding: 12px 14px; margin: 6px 0 18px; }
+  .inventory .inv-title { font-size: 10px; color: var(--pink-dark); margin-bottom: 8px; }
+  .inventory div { font-size: 22px; }
+  .inventory b { font-weight: 400; color: var(--pink-dark); }
+  .actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .toast { font-size: 20px; color: var(--muted); min-height: 1.3em; margin-top: 12px; }
+  .signature { font-size: 26px; color: var(--pink-dark); margin-top: 8px; }
+
+  .pixel-confetti { position: fixed; top: -12px; width: 10px; height: 10px; z-index: 20; pointer-events: none; animation: fall steps(12) forwards; }
+  @keyframes fall { to { transform: translateY(110vh); } }
+
+  @media (max-width: 420px) {
+    .title { font-size: 20px; }
+    .panel { padding: 24px 16px; box-shadow: 6px 6px 0 var(--pink), 6px 6px 0 4px var(--ink); }
+    .panel h2 { font-size: 30px; }
+    .typed { font-size: 22px; }
+    .countdown div { min-width: 58px; }
+    .countdown b { font-size: 15px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+<div class="bg-float" id="bgFloat" aria-hidden="true"></div>
+
+<header class="hud">
+  <span class="lv px">LV 28</span>
+  <div class="hp" id="hp" aria-label="Tiến trình"></div>
+  <button class="sound" id="soundBtn" aria-pressed="true">SFX ON</button>
+</header>
+
+<!-- 1. Màn hình bắt đầu (thay phong bì) -->
+<section class="screen active" id="s-start">
+  <div class="sprite bounce" aria-hidden="true"></div>
+  <h1 class="title px">LEVEL 28<br>UNLOCKED</h1>
+  <p class="subtitle">Một nhiệm vụ đặc biệt dành cho <span id="nameHint"></span></p>
+  <button class="btn yellow px blink" id="startBtn">PRESS START</button>
+</section>
+
+<!-- 2. Lá thư (hộp thoại RPG) -->
+<section class="screen" id="s-letter">
+  <div class="panel dialog">
+    <span class="nametag px" id="nametag"></span>
+    <p class="typed" id="typed"></p>
+    <div class="next"><button class="btn" id="toPlan" hidden>Tiếp ▶</button></div>
+  </div>
+</section>
+
+<!-- 3. Kế hoạch (nhiệm vụ) -->
+<section class="screen" id="s-plan">
+  <div class="panel">
+    <p class="panel-title px">QUEST LOG</p>
+    <div class="date-badge" id="dateBadge"></div>
+    <p class="timer-label px">TIME LEFT</p>
+    <div class="countdown" id="countdown"></div>
+    <ul class="quests" id="timeline"></ul>
+    <button class="btn" id="toAsk">Nhận nhiệm vụ? ▶</button>
+  </div>
+</section>
+
+<!-- 4. Câu hỏi -->
+<section class="screen" id="s-ask">
+  <div class="panel">
+    <p class="panel-title px">NEW QUEST!</p>
+    <h2>Em đi chơi với anh vào sinh nhật nhé?</h2>
+    <div class="choices">
+      <button class="btn px" id="yesBtn">YES ♥</button>
+      <button class="btn ghost" id="noBtn">Không</button>
+    </div>
+  </div>
+</section>
+
+<!-- 5. Chọn món (cửa hàng vật phẩm) -->
+<section class="screen" id="s-food">
+  <div class="panel">
+    <p class="panel-title px">ITEM SHOP</p>
+    <h2>Tối đó em muốn ăn gì nè?</h2>
+    <div id="foodGroups"></div>
+    <div class="shop-group">
+      <h3>Ghi chú cho anh <small>(tùy chọn)</small></h3>
+      <textarea class="note" id="foodNote" rows="2" placeholder="VD: ít cay, không hành…"></textarea>
+    </div>
+    <button class="btn" id="toYes" disabled>Chốt món ▶</button>
+  </div>
+</section>
+
+<!-- 6. Hoàn thành -->
+<section class="screen" id="s-yes">
+  <div class="panel">
+    <div class="sprite bounce" aria-hidden="true"></div>
+    <p class="panel-title px">QUEST ACCEPTED!</p>
+    <p id="finalMsg"></p>
+    <div class="inventory" id="summary"></div>
+    <div class="actions">
+      <button class="btn" id="shareBtn">Gửi cho anh ✉</button>
+      <button class="btn ghost" id="rechoose">Chọn lại món</button>
+    </div>
+    <p class="toast" id="toast"></p>
+    <p class="signature" id="signature"></p>
+  </div>
+</section>
+
+<script>
+/* ===== CHỈNH SỬA Ở ĐÂY ===== */
+const CONFIG = {
+  herName: 'em yêu',          // tên / biệt danh của cô ấy
+  yourName: 'Anh',            // tên của bạn
+  yourNameTag: 'ANH',         // nhãn hộp thoại (KHÔNG dấu, vì font pixel không có dấu)
+  birthday: { day: 28, month: 10 },
+  meetTime: '17:00',          // giờ anh qua đón (dùng cho đồng hồ đếm ngược)
+  letter:
+`Chúc mừng sinh nhật sớm nha em!
+
+Cảm ơn em vì đã xuất hiện và làm mỗi ngày của anh trở nên dịu dàng hơn.
+Năm nay anh muốn dành trọn ngày 28/10 để làm em cười thật nhiều.
+Anh đã chuẩn bị một chút kế hoạch nhỏ… em xem thử nhé!`,
+  plan: [
+    { icon: '🚗', time: '17:00', title: 'Anh qua đón em', desc: 'Em chỉ cần xinh đẹp như mọi ngày thôi' },
+    { icon: '🍝', time: '18:00', title: 'Bữa tối lãng mạn', desc: 'Một nhà hàng nhỏ, ấm cúng anh đã đặt bàn' },
+    { icon: '🎂', time: '19:30', title: 'Thổi nến & ước nguyện', desc: 'Bánh kem vị em thích nhất' },
+    { icon: '🌃', time: '20:30', title: 'Dạo phố ngắm đèn', desc: 'Tay trong tay, kể nhau nghe chuyện cả năm' },
+    { icon: '🎁', time: '21:30', title: 'Bất ngờ cuối ngày', desc: 'Bí mật! Đến lúc đó em sẽ biết 🤫' },
+  ],
+  food: {
+    main: {
+      label: 'Món chính', required: true, options: [
+        { icon: '🍲', name: 'Lẩu' },
+        { icon: '🥩', name: 'Bò bít tết' },
+        { icon: '🍣', name: 'Sushi' },
+        { icon: '🍝', name: 'Mì Ý' },
+        { icon: '🍖', name: 'Nướng BBQ' },
+        { icon: '🍕', name: 'Pizza' },
+      ],
+    },
+    dessert: {
+      label: 'Tráng miệng', options: [
+        { icon: '🎂', name: 'Bánh kem' },
+        { icon: '🍨', name: 'Kem' },
+        { icon: '🍮', name: 'Bánh flan' },
+        { icon: '🧁', name: 'Cupcake' },
+      ],
+    },
+    drink: {
+      label: 'Đồ uống', options: [
+        { icon: '🧋', name: 'Trà sữa' },
+        { icon: '🍹', name: 'Nước ép' },
+        { icon: '☕', name: 'Cà phê' },
+        { icon: '🍷', name: 'Rượu vang' },
+      ],
+    },
+  },
+  finalMsg: 'Vậy là chốt rồi nhé! Hẹn em ngày 28/10, nhớ để dành cả buổi tối cho anh. Yêu em nhiều lắm ♥',
+};
+/* =========================== */
+
+const $ = id => document.getElementById(id);
+const SCREENS = ['s-start', 's-letter', 's-plan', 's-ask', 's-food', 's-yes'];
+
+// HP bar = tiến trình (mỗi màn thêm 1 tim)
+$('hp').innerHTML = SCREENS.map(() => '<span>♥</span>').join('');
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  $(id).classList.add('active');
+  const step = SCREENS.indexOf(id);
+  $('hp').querySelectorAll('span').forEach((h, i) => h.classList.toggle('on', i <= step));
+  window.scrollTo(0, 0);
+}
+show('s-start');
+
+// 8-bit sound effects
+let soundOn = true, audio;
+function beep(freqs, dur = .08) {
+  if (!soundOn) return;
+  try {
+    audio = audio || new (window.AudioContext || window.webkitAudioContext)();
+    freqs.forEach((f, i) => {
+      const o = audio.createOscillator(), g = audio.createGain();
+      o.type = 'square'; o.frequency.value = f;
+      g.gain.value = .05;
+      o.connect(g); g.connect(audio.destination);
+      const t = audio.currentTime + i * dur;
+      o.start(t); o.stop(t + dur);
+    });
+  } catch (e) {}
+}
+const SFX = {
+  select: () => beep([880], .05),
+  next: () => beep([523, 784], .07),
+  dodge: () => beep([220, 160], .06),
+  win: () => beep([523, 659, 784, 1047, 784, 1047], .1),
+  type: () => beep([1200], .015),
+};
+$('soundBtn').addEventListener('click', () => {
+  soundOn = !soundOn;
+  $('soundBtn').textContent = soundOn ? 'SFX ON' : 'SFX OFF';
+  $('soundBtn').setAttribute('aria-pressed', soundOn);
+  SFX.select();
+});
+
+// Floating pixel stars
+const floatChars = ['★', '♥', '✦', '+'];
+function spawnFloat() {
+  const h = document.createElement('span');
+  h.textContent = floatChars[Math.floor(Math.random() * floatChars.length)];
+  h.style.left = Math.random() * 100 + 'vw';
+  h.style.fontSize = (Math.random() < .5 ? 10 : 16) + 'px';
+  h.style.color = ['#ffd23f', '#ff5c8a', '#6ec6ff', '#3ddc97'][Math.floor(Math.random() * 4)];
+  h.style.animationDuration = 8 + Math.random() * 6 + 's';
+  h.style.animationTimingFunction = 'steps(40)';
+  $('bgFloat').appendChild(h);
+  setTimeout(() => h.remove(), 14000);
+}
+setInterval(spawnFloat, 900);
+
+// Text setup
+$('nameHint').textContent = CONFIG.herName;
+$('nametag').textContent = CONFIG.yourNameTag;
+$('finalMsg').textContent = CONFIG.finalMsg;
+$('signature').textContent = `— ${CONFIG.yourName} —`;
+
+// Next birthday date (this year, or next year if passed)
+function nextBirthday() {
+  const now = new Date();
+  const [hh, mm] = CONFIG.meetTime.split(':').map(Number);
+  let d = new Date(now.getFullYear(), CONFIG.birthday.month - 1, CONFIG.birthday.day, hh, mm);
+  const endOfDay = new Date(d); endOfDay.setHours(23, 59, 59);
+  if (now > endOfDay) d.setFullYear(d.getFullYear() + 1);
+  return d;
+}
+const bday = nextBirthday();
+const weekdays = ['Chủ nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
+$('dateBadge').textContent =
+  `${weekdays[bday.getDay()]}, ${String(bday.getDate()).padStart(2, '0')}/${String(bday.getMonth() + 1).padStart(2, '0')}/${bday.getFullYear()}`;
+
+function tick() {
+  const diff = bday - new Date();
+  if (diff <= 0) {
+    $('countdown').innerHTML = '<p class="today">Chính là hôm nay đó! ★</p>';
+    return;
+  }
+  const units = [
+    ['Ngày', Math.floor(diff / 864e5)],
+    ['Giờ', Math.floor(diff / 36e5) % 24],
+    ['Phút', Math.floor(diff / 6e4) % 60],
+    ['Giây', Math.floor(diff / 1e3) % 60],
+  ];
+  $('countdown').innerHTML = units.map(([l, v]) => `<div><b>${String(v).padStart(2, '0')}</b><small>${l}</small></div>`).join('');
+}
+tick(); setInterval(tick, 1000);
+
+$('timeline').innerHTML = CONFIG.plan.map(p =>
+  `<li><span class="ico">${p.icon}</span><div><span class="time">${p.time}</span> · ${p.title}<div class="desc">${p.desc}</div></div></li>`
+).join('');
+
+// Start → letter (typewriter)
+$('startBtn').addEventListener('click', () => { SFX.next(); show('s-letter'); typeLetter(); });
+function typeLetter() {
+  const el = $('typed'); let i = 0;
+  const text = CONFIG.letter;
+  const step = () => {
+    el.textContent = text.slice(0, ++i);
+    if (i % 3 === 0) SFX.type();
+    if (i < text.length) setTimeout(step, 35);
+    else { el.classList.add('done'); $('toPlan').hidden = false; }
+  };
+  step();
+  // tap to skip
+  el.addEventListener('click', () => { i = text.length - 1; }, { once: true });
+}
+
+$('toPlan').addEventListener('click', () => { SFX.next(); show('s-plan'); });
+$('toAsk').addEventListener('click', () => { SFX.next(); show('s-ask'); });
+
+// "No" button runs away, "Yes" grows
+const noTexts = ['Không', 'Chắc chưa?', 'Nghĩ lại đi mà', 'Thôi mà…', 'MISS!', 'Bấm YES đi!'];
+let noCount = 0;
+function dodge(e) {
+  e.preventDefault();
+  SFX.dodge();
+  noCount++;
+  const no = $('noBtn');
+  no.textContent = noTexts[Math.min(noCount, noTexts.length - 1)];
+  const x = (Math.random() - .5) * Math.min(260, window.innerWidth - 120);
+  const y = (Math.random() - .5) * 160;
+  no.style.transform = `translate(${x}px, ${y}px)`;
+  $('yesBtn').style.transform = `scale(${Math.min(1 + noCount * .12, 1.6)})`;
+}
+$('noBtn').addEventListener('mouseenter', dodge);
+$('noBtn').addEventListener('click', dodge);
+$('noBtn').addEventListener('touchstart', dodge, { passive: false });
+
+$('yesBtn').addEventListener('click', () => { SFX.next(); show('s-food'); });
+
+// Item shop (chọn món)
+const STORE_KEY = 'darling-food-choice';
+let choice = { note: '' };
+try { choice = { ...choice, ...JSON.parse(localStorage.getItem(STORE_KEY) || '{}') }; } catch (e) {}
+const save = () => { try { localStorage.setItem(STORE_KEY, JSON.stringify(choice)); } catch (e) {} };
+
+$('foodGroups').innerHTML = Object.entries(CONFIG.food).map(([key, g]) =>
+  `<div class="shop-group">
+    <h3>${g.label} <small>${g.required ? '(chọn 1)' : '(tùy chọn)'}</small></h3>
+    <div class="items">${g.options.map(o =>
+      `<button type="button" class="item" data-group="${key}" data-name="${o.name}" aria-pressed="false"><span>${o.icon}</span>${o.name}</button>`
+    ).join('')}</div>
+  </div>`
+).join('');
+
+function renderFood() {
+  document.querySelectorAll('.item').forEach(b =>
+    b.setAttribute('aria-pressed', choice[b.dataset.group] === b.dataset.name));
+  $('foodNote').value = choice.note || '';
+  $('toYes').disabled = Object.entries(CONFIG.food).some(([k, g]) => g.required && !choice[k]);
+}
+$('foodGroups').addEventListener('click', e => {
+  const b = e.target.closest('.item');
+  if (!b) return;
+  SFX.select();
+  const g = b.dataset.group;
+  // bấm lại món đã chọn để bỏ chọn (trừ nhóm bắt buộc)
+  choice[g] = choice[g] === b.dataset.name && !CONFIG.food[g].required ? undefined : b.dataset.name;
+  save(); renderFood();
+});
+$('foodNote').addEventListener('input', e => { choice.note = e.target.value; save(); });
+renderFood();
+
+function summaryLines() {
+  const lines = Object.entries(CONFIG.food)
+    .filter(([k]) => choice[k])
+    .map(([k, g]) => [g.label, choice[k]]);
+  if (choice.note && choice.note.trim()) lines.push(['Ghi chú', choice.note.trim()]);
+  return lines;
+}
+const esc = t => t.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+$('toYes').addEventListener('click', () => {
+  $('summary').innerHTML = '<p class="inv-title px">INVENTORY</p>' +
+    summaryLines().map(([l, v]) => `<div>▸ ${l}: <b>${esc(v)}</b></div>`).join('');
+  $('toast').textContent = '';
+  show('s-yes');
+  SFX.win();
+  confetti();
+});
+$('rechoose').addEventListener('click', () => { SFX.select(); show('s-food'); });
+
+$('shareBtn').addEventListener('click', async () => {
+  SFX.select();
+  const text = `Em đồng ý đi chơi sinh nhật 28/10 rồi nha ♥\n` +
+    summaryLines().map(([l, v]) => `${l}: ${v}`).join('\n');
+  try {
+    if (navigator.share) { await navigator.share({ text }); return; }
+    await navigator.clipboard.writeText(text);
+    $('toast').textContent = 'Đã sao chép! Em dán vào tin nhắn gửi anh nhé ♥';
+  } catch (e) {
+    if (e.name !== 'AbortError') $('toast').textContent = text;
+  }
+});
+
+function confetti() {
+  const colors = ['#ff5c8a', '#ffd23f', '#3ddc97', '#6ec6ff', '#ffffff'];
+  for (let i = 0; i < 90; i++) {
+    const c = document.createElement('div');
+    c.className = 'pixel-confetti';
+    c.style.left = Math.round(Math.random() * 100) + 'vw';
+    c.style.background = colors[i % colors.length];
+    c.style.animationDuration = 2 + Math.random() * 2 + 's';
+    c.style.animationDelay = Math.random() * .8 + 's';
+    document.body.appendChild(c);
+    setTimeout(() => c.remove(), 5000);
+  }
+}
+</script>
+</body>
+</html>
