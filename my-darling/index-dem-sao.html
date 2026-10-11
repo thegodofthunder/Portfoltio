@@ -175,6 +175,19 @@
   .actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
   .toast { font-size: 14px; color: var(--muted); min-height: 1.4em; margin-top: 10px; }
 
+  /* đếm ngày bên nhau */
+  .together { margin-top: 36px; padding: 16px 28px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .together.in-card { margin-top: 22px; border: none; padding: 6px 0 0; }
+  .together .eyebrow { margin-bottom: 6px; }
+  .together p { margin: 0 0 2px; line-height: 1.35; }
+  .card .together .together-clock { font-size: 15px; }
+  .card .together .together-since { font-size: 13px; }
+  .card .together .together-days { font-size: 22px; }
+  .together-days { font-family: 'Cormorant Garamond', serif; font-size: 22px; color: var(--ink); }
+  .together-days b { font-size: 46px; font-weight: 600; color: var(--gold); line-height: 1; }
+  .together-clock { font-size: 15px; letter-spacing: 3px; color: var(--gold-soft); margin: 4px 0 2px; font-variant-numeric: tabular-nums; }
+  .together-since { font-size: 13px; color: var(--muted); }
+
   @media (max-width: 420px) {
     .card { padding: 28px 18px; }
     .card h1 { font-size: 40px; }
@@ -196,6 +209,12 @@
   <p class="eyebrow">28 · 10</p>
   <div class="envelope" id="envelope" role="button" tabindex="0" aria-label="Mở thư"><div class="seal">★</div></div>
   <p class="hint">Có một lá thư dành cho <span id="nameHint"></span> dưới bầu trời sao… chạm để mở nhé ✨</p>
+  <div class="together">
+    <p class="eyebrow">Bên nhau</p>
+    <p class="together-days"><b class="tg-days">0</b> ngày</p>
+    <p class="together-clock tg-clock">00:00:00</p>
+    <p class="together-since tg-since"></p>
+  </div>
 </section>
 
 <!-- 2. Lá thư -->
@@ -255,6 +274,12 @@
       <button class="btn ghost" id="rechoose">Chọn lại món</button>
     </div>
     <p class="toast" id="toast"></p>
+    <div class="together in-card">
+      <p class="eyebrow">Bên nhau</p>
+      <p class="together-days"><b class="tg-days">0</b> ngày</p>
+      <p class="together-clock tg-clock">00:00:00</p>
+      <p class="together-since tg-since"></p>
+    </div>
     <p class="signature" id="signature"></p>
   </div>
 </section>
@@ -263,8 +288,10 @@
 /* ===== CHỈNH SỬA Ở ĐÂY ===== */
 const CONFIG = {
   herName: 'em yêu',          // tên / biệt danh của cô ấy
+  notifyEmail: 'vanchuanhp2001@gmail.com', // nhận lựa chọn món qua email ('' để tắt)
   yourName: 'Anh',            // tên của bạn
   birthday: { day: 28, month: 10 },
+  togetherSince: '2026-02-27',  // ngày bắt đầu bên nhau (năm-tháng-ngày)
   meetTime: '17:00',          // giờ anh qua đón (dùng cho đồng hồ đếm ngược)
   letter:
 `Chúc mừng sinh nhật sớm nha em 🎂
@@ -414,6 +441,22 @@ function tick() {
 }
 tick(); setInterval(tick, 1000);
 
+// Đếm thời gian bên nhau (realtime)
+function tickTogether() {
+  const [y, m, d] = CONFIG.togetherSince.split('-').map(Number);
+  const since = new Date(y, m - 1, d);
+  const diff = Math.max(0, new Date() - since);
+  const days = Math.floor(diff / 864e5);
+  const clock = [Math.floor(diff / 36e5) % 24, Math.floor(diff / 6e4) % 60, Math.floor(diff / 1e3) % 60]
+    .map(v => String(v).padStart(2, '0')).join(':');
+  document.querySelectorAll('.tg-days').forEach(el => { el.textContent = days.toLocaleString('vi-VN'); });
+  document.querySelectorAll('.tg-clock').forEach(el => { el.textContent = clock; });
+  document.querySelectorAll('.tg-since').forEach(el => {
+    el.textContent = `kể từ ${String(d).padStart(2, '0')}/${String(m).padStart(2, '0')}/${y}`;
+  });
+}
+tickTogether(); setInterval(tickTogether, 1000);
+
 $('timeline').innerHTML = CONFIG.plan.map(p =>
   `<li data-icon="${p.icon}"><div><span class="time">${p.time}</span> · ${p.title}</div><div class="desc">${p.desc}</div></li>`
 ).join('');
@@ -508,7 +551,37 @@ $('toYes').addEventListener('click', () => {
   $('toast').textContent = '';
   show('s-yes');
   confetti();
+  sendChoiceByEmail();
 });
+
+// Gửi lựa chọn về email của anh (qua FormSubmit, không cần server)
+let lastSent = '';
+async function sendChoiceByEmail() {
+  if (!CONFIG.notifyEmail) return;
+  const lines = summaryLines();
+  const key = JSON.stringify(lines);
+  if (key === lastSent) return; // tránh gửi trùng khi bấm lại
+  const payload = {
+    _subject: `💌 ${CONFIG.herName} đã chọn món cho ngày 28/10!`,
+    _template: 'table',
+    _captcha: 'false',
+    'Thời gian': new Date().toLocaleString('vi-VN'),
+  };
+  lines.forEach(([l, v]) => { payload[l] = v; });
+  $('toast').textContent = 'Đang gửi cho anh…';
+  try {
+    const res = await fetch(`https://formsubmit.co/ajax/${CONFIG.notifyEmail}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) throw new Error(res.status);
+    lastSent = key;
+    $('toast').textContent = 'Anh đã nhận được lựa chọn của em rồi ♥';
+  } catch (e) {
+    $('toast').textContent = 'Chưa gửi được, em bấm "Gửi cho anh" giúp anh nhé!';
+  }
+}
 $('rechoose').addEventListener('click', () => show('s-food'));
 
 $('shareBtn').addEventListener('click', async () => {

@@ -6,7 +6,8 @@ Trang đơn (single page), đi tuần tự từng màn hình, không có menu.
 index.html
 │
 ├── 1. Phong bì (s-envelope)
-│     └── Phong bì 💌 + gợi ý "chạm để mở"          → [chạm] → 2
+│     ├── Phong bì 💌 + gợi ý "chạm để mở"          → [chạm] → 2
+│     └── Đếm thời gian bên nhau (ngày + giờ:phút:giây, realtime)   ← MỚI
 │
 ├── 2. Lá thư (s-letter)
 │     ├── Lời chào "Gửi <tên em>"
@@ -37,6 +38,7 @@ index.html
       ├── Tóm tắt lựa chọn của em (món chính, tráng miệng, đồ uống, ghi chú)
       ├── Nút "Gửi cho anh" (chia sẻ qua Messenger/Zalo…, hoặc sao chép)
       ├── Nút "Chọn lại món"                          → 5
+      ├── Đếm thời gian bên nhau (realtime)            ← MỚI
       └── Chữ ký "— Anh —"
 ```
 
@@ -47,16 +49,21 @@ index.html
 | `herName`    | Tên / biệt danh của cô ấy                               |
 | `yourName`   | Tên người gửi                                           |
 | `birthday`   | Ngày + tháng sinh nhật                                  |
+| `togetherSince` | Ngày bắt đầu bên nhau (`YYYY-MM-DD`)               |
 | `meetTime`   | Giờ đón (mốc đếm ngược)                                 |
 | `letter`     | Nội dung lá thư                                         |
 | `plan[]`     | Lịch trình: `icon`, `time`, `title`, `desc`             |
+| `notifyEmail`| Email nhận lựa chọn món (`''` để tắt)                   |
 | `food`       | Các nhóm món: `main`, `dessert`, `drink` → `[{icon, name}]` |
 | `finalMsg`   | Lời nhắn ở màn hình cuối                                |
 
-## Lưu lựa chọn
+## Lưu & gửi lựa chọn
 
-Trang tĩnh, không có server: lựa chọn được lưu trong trình duyệt của cô ấy (localStorage)
-và gửi cho anh qua nút **Gửi cho anh** (Web Share API, nếu không hỗ trợ thì sao chép vào clipboard).
+- Lựa chọn được lưu trong trình duyệt của cô ấy (localStorage).
+- Khi bấm **Chốt món**, lựa chọn được **tự động gửi về email** `CONFIG.notifyEmail` qua FormSubmit
+  (dịch vụ miễn phí, không cần server). Chốt lại y nguyên thì không gửi trùng; gửi lỗi thì lần chốt sau gửi lại.
+- Lần gửi đầu tiên, FormSubmit gửi email **kích hoạt** đến hộp thư – phải bấm xác nhận một lần thì các lần sau mới tới.
+- Nút **Gửi cho anh** vẫn giữ làm phương án dự phòng (Web Share API / sao chép).
 
 ## Giao diện
 
