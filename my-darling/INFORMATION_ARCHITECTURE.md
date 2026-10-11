@@ -6,7 +6,8 @@ Trang đơn (single page), đi tuần tự từng màn hình, không có menu.
 index.html
 │
 ├── 1. Phong bì (s-envelope)
-│     └── Phong bì 💌 + gợi ý "chạm để mở"          → [chạm] → 2
+│     ├── Phong bì 💌 + gợi ý "chạm để mở"          → [chạm] → 2
+│     └── Đếm thời gian bên nhau (ngày + giờ:phút:giây, realtime)   ← MỚI
 │
 ├── 2. Lá thư (s-letter)
 │     ├── Lời chào "Gửi <tên em>"
@@ -37,6 +38,7 @@ index.html
       ├── Tóm tắt lựa chọn của em (món chính, tráng miệng, đồ uống, ghi chú)
       ├── Nút "Gửi cho anh" (chia sẻ qua Messenger/Zalo…, hoặc sao chép)
       ├── Nút "Chọn lại món"                          → 5
+      ├── Đếm thời gian bên nhau (realtime)            ← MỚI
       └── Chữ ký "— Anh —"
 ```
 
@@ -47,6 +49,7 @@ index.html
 | `herName`    | Tên / biệt danh của cô ấy                               |
 | `yourName`   | Tên người gửi                                           |
 | `birthday`   | Ngày + tháng sinh nhật                                  |
+| `togetherSince` | Ngày bắt đầu bên nhau (`YYYY-MM-DD`)               |
 | `meetTime`   | Giờ đón (mốc đếm ngược)                                 |
 | `letter`     | Nội dung lá thư                                         |
 | `plan[]`     | Lịch trình: `icon`, `time`, `title`, `desc`             |

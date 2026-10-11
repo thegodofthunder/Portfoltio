@@ -168,6 +168,18 @@
   .toast { font-size: 20px; color: var(--muted); min-height: 1.3em; margin-top: 12px; }
   .signature { font-size: 26px; color: var(--pink-dark); margin-top: 8px; }
 
+  /* đếm ngày bên nhau */
+  .together {
+    background: var(--ink); color: white; border: 4px solid var(--ink);
+    box-shadow: 6px 6px 0 var(--pink); padding: 14px 22px; margin: -14px auto 30px; min-width: 240px;
+  }
+  .together.in-panel { margin: 18px auto 6px; box-shadow: 4px 4px 0 var(--pink); }
+  .together-label { font-size: 9px; color: var(--yellow); margin-bottom: 8px; }
+  .together-days { font-size: 26px; }
+  .together-days b { font-family: 'Press Start 2P', monospace; font-weight: 400; font-size: 26px; color: var(--pink); }
+  .together-clock { font-size: 14px; color: var(--mint); margin: 8px 0 6px; }
+  .together-since { font-size: 18px; color: #b9a8d0; }
+
   .pixel-confetti { position: fixed; top: -12px; width: 10px; height: 10px; z-index: 20; pointer-events: none; animation: fall steps(12) forwards; }
   @keyframes fall { to { transform: translateY(110vh); } }
 
@@ -198,6 +210,12 @@
   <div class="sprite bounce" aria-hidden="true"></div>
   <h1 class="title px">LEVEL 28<br>UNLOCKED</h1>
   <p class="subtitle">Một nhiệm vụ đặc biệt dành cho <span id="nameHint"></span></p>
+  <div class="together">
+    <p class="px together-label">DAYS TOGETHER</p>
+    <p class="together-days"><b class="tg-days">0</b> ngày</p>
+    <p class="together-clock px tg-clock">00:00:00</p>
+    <p class="together-since tg-since"></p>
+  </div>
   <button class="btn yellow px blink" id="startBtn">PRESS START</button>
 </section>
 
@@ -260,6 +278,12 @@
       <button class="btn ghost" id="rechoose">Chọn lại món</button>
     </div>
     <p class="toast" id="toast"></p>
+    <div class="together in-panel">
+      <p class="px together-label">DAYS TOGETHER</p>
+      <p class="together-days"><b class="tg-days">0</b> ngày</p>
+      <p class="together-clock px tg-clock">00:00:00</p>
+      <p class="together-since tg-since"></p>
+    </div>
     <p class="signature" id="signature"></p>
   </div>
 </section>
@@ -272,6 +296,7 @@ const CONFIG = {
   yourName: 'Anh',            // tên của bạn
   yourNameTag: 'ANH',         // nhãn hộp thoại (KHÔNG dấu, vì font pixel không có dấu)
   birthday: { day: 28, month: 10 },
+  togetherSince: '2026-02-27',  // ngày bắt đầu bên nhau (năm-tháng-ngày)
   meetTime: '17:00',          // giờ anh qua đón (dùng cho đồng hồ đếm ngược)
   letter:
 `Chúc mừng sinh nhật sớm nha em!
@@ -412,6 +437,22 @@ function tick() {
   $('countdown').innerHTML = units.map(([l, v]) => `<div><b>${String(v).padStart(2, '0')}</b><small>${l}</small></div>`).join('');
 }
 tick(); setInterval(tick, 1000);
+
+// Đếm thời gian bên nhau (realtime)
+function tickTogether() {
+  const [y, m, d] = CONFIG.togetherSince.split('-').map(Number);
+  const since = new Date(y, m - 1, d);
+  const diff = Math.max(0, new Date() - since);
+  const days = Math.floor(diff / 864e5);
+  const clock = [Math.floor(diff / 36e5) % 24, Math.floor(diff / 6e4) % 60, Math.floor(diff / 1e3) % 60]
+    .map(v => String(v).padStart(2, '0')).join(':');
+  document.querySelectorAll('.tg-days').forEach(el => { el.textContent = days.toLocaleString('vi-VN'); });
+  document.querySelectorAll('.tg-clock').forEach(el => { el.textContent = clock; });
+  document.querySelectorAll('.tg-since').forEach(el => {
+    el.textContent = `kể từ ${String(d).padStart(2, '0')}/${String(m).padStart(2, '0')}/${y}`;
+  });
+}
+tickTogether(); setInterval(tickTogether, 1000);
 
 $('timeline').innerHTML = CONFIG.plan.map(p =>
   `<li><span class="ico">${p.icon}</span><div><span class="time">${p.time}</span> · ${p.title}<div class="desc">${p.desc}</div></div></li>`
