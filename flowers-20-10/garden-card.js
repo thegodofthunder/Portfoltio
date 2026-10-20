@@ -1,7 +1,8 @@
 (() => {
   'use strict';
 
-  const STORAGE_KEY = 'flower.garden.greeting.20-10.v1';
+  // Each garden page keeps its own saved greeting.
+  const STORAGE_KEY = 'flower.garden.greeting.20-10.v1:' + location.pathname.split('/').pop();
   const card = document.getElementById('wishCard');
   const reading = document.getElementById('cardReading');
   const editor = document.getElementById('cardEditor');
