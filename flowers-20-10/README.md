@@ -4,6 +4,12 @@
 
 Trang tặng hoa, album ảnh người nhận và thiệp chúc mừng ngày Phụ nữ Việt Nam 20/10, dùng HTML, CSS và JavaScript thuần. Hoạt động offline, không cần cài thư viện hoặc build.
 
+## Link đã đăng
+
+- Bó hoa: https://thegodofthunder.github.io/Portfoltio/flowers-20-10/
+- Vườn hoa gửi MCG: https://thegodofthunder.github.io/Portfoltio/flowers-20-10/gui-mcg.html
+- Vườn hoa gửi em Hương: https://thegodofthunder.github.io/Portfoltio/flowers-20-10/gui-em-huong.html
+
 ## Chạy
 
 Mở `index.html` trực tiếp trong trình duyệt, hoặc chạy từ thư mục này:
