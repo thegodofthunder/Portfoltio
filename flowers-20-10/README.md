@@ -8,7 +8,7 @@ Trang tặng hoa, album ảnh người nhận và thiệp chúc mừng ngày Ph�
 
 - Bó hoa: https://thegodofthunder.github.io/Portfoltio/flowers-20-10/
 - Vườn hoa gửi MCG: https://thegodofthunder.github.io/Portfoltio/flowers-20-10/gui-mcg.html
-- Vườn hoa gửi em Hương: https://thegodofthunder.github.io/Portfoltio/flowers-20-10/gui-em-huong.html
+- Vườn hoa gửi Lãnh đạo: https://thegodofthunder.github.io/Portfoltio/flowers-20-10/nguoi-lanh-dao.html
 
 ## Chạy
 
@@ -27,7 +27,7 @@ Mở `gui-mcg.html` trực tiếp trong trình duyệt, chọn **Ngắm vườn 
 - Ban đầu chỉ có một bông hoa giữa màn hình. Bấm vào hoa (hoặc dùng Tab rồi Enter/Space) để cả vườn hoa dần nở từ giữa ra hai bên.
 - Sau khoảng 7 giây, thiệp chúc 20/10 tự hiện. Chọn **Ngắm vườn hoa**, nút × hoặc Escape để đóng thiệp.
 - Chọn **Đọc lại thiệp** để mở lại, hoặc **Cho hoa nở lại** để trở về bông hoa đầu tiên.
-- `gui-em-huong.html` là bản sao của vườn hoa với lời chúc gửi em Hương.
+- `nguoi-lanh-dao.html` là bản sao của vườn hoa với lời chúc gửi Lãnh đạo (link cũ `gui-em-huong.html`, `gui-madam-huong.html` tự chuyển sang).
 - Chọn **Viết lời chúc riêng** trong thiệp để sửa người nhận, tiêu đề, lời chúc và chữ ký. **Lưu lời chúc** cập nhật thiệp và lưu trên trình duyệt hiện tại; **Hủy** bỏ sửa đổi chưa lưu. Lời chúc của vườn hoa được lưu riêng với thiệp ở `index.html`.
 - Trang tự điều chỉnh theo màn hình và bỏ qua hoạt ảnh nở khi người xem bật chế độ giảm chuyển động.
 - Hoa hồng dùng cùng cách dựng cánh với `index.html`: nhiều vòng cánh cong, tâm xoắn, bóng giữa các cánh, viền bắt sáng và giọt sương. Các hàm vẽ được lấy từ `script.js` sang `garden-botany.js` cho vườn hoa. Lá có gân, thân lay theo gió, hoa nghiêng nhẹ khi rê chuột gần và có cánh hoa bay; chuyển động tạm dừng khi tab bị ẩn.
